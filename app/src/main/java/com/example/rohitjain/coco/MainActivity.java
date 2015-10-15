@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
     private static final String DEBUG_TAG = "Gestures";
     private GestureDetectorCompat mDetector;
-    String CURRENT_IP = "192.168.1.154";
+    String CURRENT_IP = "10.144.15.210";
     TextToSpeech t1;
 
 
@@ -219,6 +219,5 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
         String RANDOM_IMAGE_URL = "http://"+ CURRENT_IP +":8000/experiment/random";
         new DownloadImageJson().execute(RANDOM_IMAGE_URL);
-
     }
 }
