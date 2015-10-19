@@ -14,6 +14,7 @@ public class Boundary {
     Double width;
     Integer categoryId;
     String categoryName;
+    Boolean touched;
 
     Integer getCategoryId(){
         return this.categoryId;
@@ -25,9 +26,14 @@ public class Boundary {
 
     Boolean isInside(Double touchX, Double touchY){
         if( touchX > x && touchX<(x + width)  && touchY > y && touchY<(y + height) ){
+            this.touched = true;
             return true;
         }
         return false;
+    }
+
+    Boolean isTouched(){
+        return this.touched;
     }
 
     Boundary(Double x, Double y, Double height, Double width, Integer categoryId, String categoryName){
@@ -37,6 +43,7 @@ public class Boundary {
         this.height = height;
         this.categoryId = categoryId;
         this.categoryName = categoryName;
+        this.touched = false;
     }
 
     Boundary(JSONObject jsonBbox){
@@ -49,6 +56,7 @@ public class Boundary {
             this.height = bboxes.getDouble("h");
             this.categoryId = jsonBbox.getInt("category_id");
             this.categoryName = jsonBbox.getString("category_name");
+            this.touched = false;
         } catch (JSONException e) {
             e.printStackTrace();
         }

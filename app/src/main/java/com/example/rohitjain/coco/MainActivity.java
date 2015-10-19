@@ -32,8 +32,12 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
     private static final String DEBUG_TAG = "Gestures";
     private GestureDetectorCompat mDetector;
-    String CURRENT_IP = "10.144.15.210";
+    String CURRENT_IP = "192.168.1.154";
     TextToSpeech t1;
+
+    // Bounding boxes and category id
+    final List<Boundary> boundaryList = new ArrayList<Boundary>();
+
 
 
     public class DownloadImageJson extends AsyncTask<String, Void, String> {
@@ -81,11 +85,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             String jsonString;
             String imageId, imageFileName = "";
 
-            // Bounding boxes and category id
-            final List<Boundary> boundaryList = new ArrayList<Boundary>();
-
             jsonString = output;
-            Log.v("prcessingJson", output);
+            Log.v("processingJson", output);
 
             try {
                 JSONObject obj = new JSONObject(jsonString);
@@ -103,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
             // this is the view on which you will listen for touch events
             String IMAGE_URL_STRING = "http://"+ CURRENT_IP +":8000/static/" + imageFileName;
+            // downloads and sets the image
             new DownloadImageTask((ImageView) findViewById(R.id.imageView)).execute(IMAGE_URL_STRING);
 
             t1 =new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
@@ -190,6 +192,28 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     @Override
     public boolean onDoubleTap(MotionEvent event) {
         Log.d(DEBUG_TAG, "onDoubleTap: " + event.toString());
+        int total = boundaryList.size();
+        final TextView tv = (TextView) findViewById(R.id.textView);
+
+        for(Boundary b:boundaryList){
+            if(b.isTouched() == true){
+                total -= 1;
+            }
+        }
+        t1 =new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if(status != TextToSpeech.ERROR) {
+                    t1.setLanguage(Locale.US);
+                }
+            }
+        });
+
+        String objectsLeft = String.valueOf(total) + " objects left";
+        t1.speak( objectsLeft, TextToSpeech.QUEUE_FLUSH, null);
+        tv.setText(objectsLeft);
+
+
         return true;
     }
 
