@@ -180,7 +180,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     }
 
     public void initDownloadImageJson(){
-        String RANDOM_IMAGE_URL = "http://"+ R.string.CURRENT_IP +":8000/experiment/random";
+        String RANDOM_IMAGE_URL = "http://"+ getString(R.string.CURRENT_IP) +":8000/experiment/random";
+        Log.d("init download", RANDOM_IMAGE_URL);
         new DownloadImageJson(this).execute(RANDOM_IMAGE_URL);
     }
 
@@ -207,7 +208,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         }
 
         // this is the view on which you will listen for touch events
-        String IMAGE_URL_STRING = "http://"+ R.string.CURRENT_IP +":8000/static/" + imageFileName;
+        String IMAGE_URL_STRING = "http://"+ getString(R.string.CURRENT_IP) +":8000/static/" + imageFileName;
         // downloads and sets the image
 //            new DownloadImageTask((ImageView) findViewById(R.id.imageView), MainActivity.this).execute(IMAGE_URL_STRING);
         CircularProgressView progressView = (CircularProgressView) findViewById(R.id.progress_view);

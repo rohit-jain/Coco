@@ -21,8 +21,6 @@ import org.json.JSONObject;
 
 public class ImageActivity extends AppCompatActivity implements View.OnClickListener, HandleResponse{
 
-    String CURRENT_IP = "192.168.1.154";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +52,7 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
 
 
     public void initDownloadImageJson(){
-        String RANDOM_IMAGE_URL = "http://"+ CURRENT_IP +":8000/experiment/random";
+        String RANDOM_IMAGE_URL = "http://"+ getString(R.string.CURRENT_IP) +":8000/experiment/random";
         new DownloadImageJson(this).execute(RANDOM_IMAGE_URL);
     }
 
@@ -76,7 +74,7 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
         }
 
         // this is the view on which you will listen for touch events
-        String IMAGE_URL_STRING = "http://"+ CURRENT_IP +":8000/static/" + imageFileName;
+        String IMAGE_URL_STRING = "http://"+ getString(R.string.CURRENT_IP) +":8000/static/" + imageFileName;
         // downloads and sets the image
 //            new DownloadImageTask((ImageView) findViewById(R.id.imageView), MainActivity.this).execute(IMAGE_URL_STRING);
         CircularProgressView progressView = (CircularProgressView) findViewById(R.id.progress_view);
