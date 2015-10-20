@@ -2,6 +2,7 @@ package com.example.rohitjain.coco;
 
 import android.os.AsyncTask;
 import android.speech.tts.TextToSpeech;
+import android.speech.tts.TextToSpeech.OnInitListener;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -28,16 +29,23 @@ import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity implements GestureDetector.OnGestureListener,
-        GestureDetector.OnDoubleTapListener{
+        GestureDetector.OnDoubleTapListener, OnInitListener{
 
     private static final String DEBUG_TAG = "Gestures";
     private GestureDetectorCompat mDetector;
-    String CURRENT_IP = "192.168.1.154";
-    TextToSpeech t1;
+    String CURRENT_IP = "10.144.18.252";
+    TextToSpeech tts;
+
 
     // Bounding boxes and category id
     final List<Boundary> boundaryList = new ArrayList<Boundary>();
 
+    @Override
+    public void onInit(int status) {
+        if(status != TextToSpeech.ERROR) {
+            tts.setLanguage(Locale.US);
+        }
+    }
 
 
     public class DownloadImageJson extends AsyncTask<String, Void, String> {
@@ -107,15 +115,6 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             // downloads and sets the image
             new DownloadImageTask((ImageView) findViewById(R.id.imageView)).execute(IMAGE_URL_STRING);
 
-            t1 =new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
-                @Override
-                public void onInit(int status) {
-                    if(status != TextToSpeech.ERROR) {
-                        t1.setLanguage(Locale.US);
-                    }
-                }
-            });
-
             final ImageView iv = (ImageView) findViewById(R.id.imageView);
             final TextView tv = (TextView) findViewById(R.id.textView);
 
@@ -128,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                         if (b.isInside(((double) event.getX()), (double) event.getY())) {
                             try {
                                 tv.setText("Category : " + b.getCategoryName() + String.valueOf(event.getX()) + "x" + String.valueOf(event.getY()));
-                                t1.speak(String.valueOf(b.getCategoryName()), TextToSpeech.QUEUE_FLUSH, null);
+                                tts.speak(String.valueOf(b.getCategoryName()), TextToSpeech.QUEUE_FLUSH, null);
                             } catch (Exception e) {
                                 Log.v("tts", "error");
                                 e.printStackTrace();
@@ -151,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
     @Override
     public boolean onDown(MotionEvent event) {
-        Log.d(DEBUG_TAG,"onDown: " + event.toString());
+        Log.d(DEBUG_TAG, "onDown: " + event.toString());
         return true;
     }
 
@@ -200,17 +199,9 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                 total -= 1;
             }
         }
-        t1 =new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if(status != TextToSpeech.ERROR) {
-                    t1.setLanguage(Locale.US);
-                }
-            }
-        });
 
-        String objectsLeft = String.valueOf(total) + " objects left";
-        t1.speak( objectsLeft, TextToSpeech.QUEUE_FLUSH, null);
+        String objectsLeft = String.valueOf(total) + " left";
+        tts.speak( objectsLeft, TextToSpeech.QUEUE_FLUSH, null);
         tv.setText(objectsLeft);
 
 
@@ -230,8 +221,19 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     }
 
     @Override
+    protected void onDestroy() {
+        // Don't forget to shutdown!
+        if (tts != null) {
+            tts.stop();
+            tts.shutdown();
+        }
+        super.onDestroy();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        tts = new TextToSpeech(this, this);
         setContentView(R.layout.activity_main);
         // Instantiate the gesture detector with the
         // application context and an implementation of
@@ -244,4 +246,6 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         String RANDOM_IMAGE_URL = "http://"+ CURRENT_IP +":8000/experiment/random";
         new DownloadImageJson().execute(RANDOM_IMAGE_URL);
     }
+
+
 }
