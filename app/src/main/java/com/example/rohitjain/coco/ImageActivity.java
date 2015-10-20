@@ -81,6 +81,6 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
 //            new DownloadImageTask((ImageView) findViewById(R.id.imageView), MainActivity.this).execute(IMAGE_URL_STRING);
         CircularProgressView progressView = (CircularProgressView) findViewById(R.id.progress_view);
 
-        new DownloadImageTask((ImageView) findViewById(R.id.imageView2), progressView).execute(IMAGE_URL_STRING);
+        new DownloadImageTask((ImageView) findViewById(R.id.imageView2), progressView, true).execute(IMAGE_URL_STRING);
     }
 }

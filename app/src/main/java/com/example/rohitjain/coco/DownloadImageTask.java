@@ -16,17 +16,16 @@ import java.io.InputStream;
 /**
  * Created by rohitjain on 11/10/15.
  */
-public class DownloadImageTask extends AsyncTask<String, Void, BitmapFactory.Options> {
+public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
     ImageView bmImage;
-    Context activityContext;
     CircularProgressView progressView;
-//    private ProgressDialog mDialog;
+    Boolean showImage;
+    int imageHeight, imageWidth;
 
-
-    public DownloadImageTask(ImageView bmImage, CircularProgressView progressView) {
+    public DownloadImageTask(ImageView bmImage, CircularProgressView progressView, Boolean showImage) {
         this.bmImage = bmImage;
-//        this.activityContext = c;
         this.progressView = progressView;
+        this.showImage = showImage;
     }
 
     protected void onPreExecute(){
@@ -37,27 +36,33 @@ public class DownloadImageTask extends AsyncTask<String, Void, BitmapFactory.Opt
         //this.mDialog = ProgressDialog.show(this.activityContext, "Loading", "Wait while loading...");
     }
 
-    protected BitmapFactory.Options doInBackground(String... urls) {
+    protected Bitmap doInBackground(String... urls) {
         String urldisplay = urls[0];
         BitmapFactory.Options options = new BitmapFactory.Options();
         Bitmap mIcon11 = null;
         try {
             InputStream in = new java.net.URL(urldisplay).openStream();
             mIcon11 = BitmapFactory.decodeStream(in, null, options);
+            this.imageHeight = options.outHeight;
+            this.imageWidth = options.outWidth;
             Log.v("Download", options.outHeight + " " + options.outWidth);
         } catch (Exception e) {
             Log.e("Error", e.getMessage());
             e.printStackTrace();
         }
-        return options;
+        return mIcon11;
     }
 
-    protected void onPostExecute(BitmapFactory.Options result) {
-//        bmImage.setImageBitmap(result);
-//        bmImage.setVisibility(View.INVISIBLE);
+    protected void onPostExecute(Bitmap resultImage) {
         this.progressView.setVisibility(View.INVISIBLE);
-        this.bmImage.getLayoutParams().height = result.outHeight;
-        this.bmImage.getLayoutParams().width = result.outWidth;
-        this.bmImage.requestLayout();
+
+        if (this.showImage == true) {
+            bmImage.setImageBitmap(resultImage);
+        }
+        else {
+            this.bmImage.getLayoutParams().height = this.imageHeight;
+            this.bmImage.getLayoutParams().width = this.imageWidth;
+            this.bmImage.requestLayout();
+        }
     }
 }

@@ -2,7 +2,6 @@ package com.example.rohitjain.coco;
 
 import android.app.ActivityOptions;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.support.design.widget.FloatingActionButton;
@@ -25,12 +24,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -41,7 +34,6 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
     private static final String DEBUG_TAG = "Gestures";
     private GestureDetectorCompat mDetector;
-    String CURRENT_IP = "192.168.1.154";
     TextToSpeech tts;
 
 
@@ -188,14 +180,14 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     }
 
     public void initDownloadImageJson(){
-        String RANDOM_IMAGE_URL = "http://"+ CURRENT_IP +":8000/experiment/random";
+        String RANDOM_IMAGE_URL = "http://"+ R.string.CURRENT_IP +":8000/experiment/random";
         new DownloadImageJson(this).execute(RANDOM_IMAGE_URL);
     }
 
     @Override
     public void processFinish(String output) {
         String jsonString;
-        String imageId, imageFileName = "";
+        String imageFileName = "";
 
         jsonString = output;
         Log.v("processingJson", output);
@@ -215,12 +207,12 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         }
 
         // this is the view on which you will listen for touch events
-        String IMAGE_URL_STRING = "http://"+ CURRENT_IP +":8000/static/" + imageFileName;
+        String IMAGE_URL_STRING = "http://"+ R.string.CURRENT_IP +":8000/static/" + imageFileName;
         // downloads and sets the image
 //            new DownloadImageTask((ImageView) findViewById(R.id.imageView), MainActivity.this).execute(IMAGE_URL_STRING);
         CircularProgressView progressView = (CircularProgressView) findViewById(R.id.progress_view);
 
-        new DownloadImageTask((ImageView) findViewById(R.id.imageView), progressView).execute(IMAGE_URL_STRING);
+        new DownloadImageTask((ImageView) findViewById(R.id.imageView), progressView, false).execute(IMAGE_URL_STRING);
 
         final ImageView iv = (ImageView) findViewById(R.id.imageView);
         final TextView tv = (TextView) findViewById(R.id.textView);
