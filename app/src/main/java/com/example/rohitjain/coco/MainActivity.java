@@ -1,17 +1,25 @@
 package com.example.rohitjain.coco;
 
+import android.app.ActivityOptions;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.transition.Explode;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.github.rahatarmanahmed.cpv.CircularProgressView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,11 +37,11 @@ import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity implements GestureDetector.OnGestureListener,
-        GestureDetector.OnDoubleTapListener, OnInitListener{
+        GestureDetector.OnDoubleTapListener, OnInitListener, View.OnClickListener, HandleResponse{
 
     private static final String DEBUG_TAG = "Gestures";
     private GestureDetectorCompat mDetector;
-    String CURRENT_IP = "10.144.18.252";
+    String CURRENT_IP = "192.168.1.154";
     TextToSpeech tts;
 
 
@@ -47,99 +55,20 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         }
     }
 
-
-    public class DownloadImageJson extends AsyncTask<String, Void, String> {
-        private String readStream(InputStream is) {
-            try {
-                ByteArrayOutputStream bo = new ByteArrayOutputStream();
-                int i = is.read();
-                while(i != -1) {
-                    bo.write(i);
-                    i = is.read();
-                }
-                return bo.toString();
-            } catch (IOException e) {
-                return "";
-            }
+    @Override
+    public void onClick(View v) {
+        if(v.getId() == R.id.next){
+//            getWindow().getDecorView().findViewById(R.id.imageView).invalidate();
+//            initDownloadImageJson();
+            Intent intent = new Intent(MainActivity.this, CaptionActivity.class);
+            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
         }
-
-        @Override
-        protected String doInBackground(String... uri) {
-            String responseString = new String();
-            try {
-                HttpURLConnection urlConnection;
-                URL url = new URL(uri[0]);
-                urlConnection = (HttpURLConnection) url.openConnection();
-                try {
-                    InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                    responseString = readStream(in);
-                }
-                catch (Exception e) {
-                    //TODO Handle problems..
-                }
-                finally {
-                    urlConnection.disconnect();
-                }
-            }
-            catch(Exception e){
-                //TODO Handle problems..
-            }
-            return responseString;
-        }
-
-        @Override
-        protected void onPostExecute(String output) {
-
-            String jsonString;
-            String imageId, imageFileName = "";
-
-            jsonString = output;
-            Log.v("processingJson", output);
-
-            try {
-                JSONObject obj = new JSONObject(jsonString);
-                JSONArray bboxes = obj.getJSONArray("bboxes");
-                imageFileName = obj.getString("file_name");
-                boundaryList.clear();
-                for (int i = 0; i < bboxes.length(); i++)
-                {
-                    boundaryList.add(new Boundary(bboxes.getJSONObject(i)));
-                }
-            } catch (JSONException e) {
-                Log.v("Oncreate", "Error while decoding json");
-                e.printStackTrace();
-            }
-
-            // this is the view on which you will listen for touch events
-            String IMAGE_URL_STRING = "http://"+ CURRENT_IP +":8000/static/" + imageFileName;
-            // downloads and sets the image
-            new DownloadImageTask((ImageView) findViewById(R.id.imageView)).execute(IMAGE_URL_STRING);
-
-            final ImageView iv = (ImageView) findViewById(R.id.imageView);
-            final TextView tv = (TextView) findViewById(R.id.textView);
-
-            iv.setOnTouchListener(new ImageView.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    tv.setText("points : " + String.valueOf(event.getX()) + "x" + String.valueOf(event.getY()));
-
-                    for (Boundary b : boundaryList) {
-                        if (b.isInside(((double) event.getX()), (double) event.getY())) {
-                            try {
-                                tv.setText("Category : " + b.getCategoryName() + String.valueOf(event.getX()) + "x" + String.valueOf(event.getY()));
-                                tts.speak(String.valueOf(b.getCategoryName()), TextToSpeech.QUEUE_FLUSH, null);
-                            } catch (Exception e) {
-                                Log.v("tts", "error");
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                    return true;
-                }
-            });
+        else if(v.getId() == R.id.prev){
 
         }
     }
+
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event){
@@ -150,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
     @Override
     public boolean onDown(MotionEvent event) {
-        Log.d(DEBUG_TAG, "onDown: " + event.toString());
+//        Log.d(DEBUG_TAG, "onDown: " + event.toString());
         return true;
     }
 
@@ -159,32 +88,30 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                            float velocityX, float velocityY) {
         Log.d(DEBUG_TAG, "onFling: " + event1.toString() + event2.toString());
         getWindow().getDecorView().findViewById(R.id.imageView).invalidate();
-        String RANDOM_IMAGE_URL = "http://"+ CURRENT_IP +":8000/experiment/random";
-        new DownloadImageJson().execute(RANDOM_IMAGE_URL);
-
+        initDownloadImageJson();
         return true;
     }
 
     @Override
     public void onLongPress(MotionEvent event) {
-        Log.d(DEBUG_TAG, "onLongPress: " + event.toString());
+//        Log.d(DEBUG_TAG, "onLongPress: " + event.toString());
     }
 
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
                             float distanceY) {
-        Log.d(DEBUG_TAG, "onScroll: " + e1.toString()+e2.toString());
+//        Log.d(DEBUG_TAG, "onScroll: " + e1.toString()+e2.toString());
         return true;
     }
 
     @Override
     public void onShowPress(MotionEvent event) {
-        Log.d(DEBUG_TAG, "onShowPress: " + event.toString());
+//        Log.d(DEBUG_TAG, "onShowPress: " + event.toString());
     }
 
     @Override
     public boolean onSingleTapUp(MotionEvent event) {
-        Log.d(DEBUG_TAG, "onSingleTapUp: " + event.toString());
+//        Log.d(DEBUG_TAG, "onSingleTapUp: " + event.toString());
         return true;
     }
 
@@ -200,9 +127,10 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             }
         }
 
-        String objectsLeft = String.valueOf(total) + " left";
-        tts.speak( objectsLeft, TextToSpeech.QUEUE_FLUSH, null);
-        tv.setText(objectsLeft);
+        String speechObjectsLeft = String.valueOf(total) + " left";
+        String textObjectsLeft = String.valueOf(total) + "objects left";
+        tts.speak( speechObjectsLeft, TextToSpeech.QUEUE_FLUSH, null);
+        tv.setText(textObjectsLeft);
 
 
         return true;
@@ -210,13 +138,13 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
     @Override
     public boolean onDoubleTapEvent(MotionEvent event) {
-        Log.d(DEBUG_TAG, "onDoubleTapEvent: " + event.toString());
+//        Log.d(DEBUG_TAG, "onDoubleTapEvent: " + event.toString());
         return true;
     }
 
     @Override
     public boolean onSingleTapConfirmed(MotionEvent event) {
-        Log.d(DEBUG_TAG, "onSingleTapConfirmed: " + event.toString());
+//        Log.d(DEBUG_TAG, "onSingleTapConfirmed: " + event.toString());
         return true;
     }
 
@@ -232,9 +160,22 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+
         super.onCreate(savedInstanceState);
+        Log.d("Main", "Starting main");
+
+        // set an exit transition
+        getWindow().setExitTransition(new Explode());
         tts = new TextToSpeech(this, this);
         setContentView(R.layout.activity_main);
+
+        FloatingActionButton nextButton = (FloatingActionButton)findViewById(R.id.next);
+        FloatingActionButton prevButton = (FloatingActionButton)findViewById(R.id.prev);
+
+        nextButton.setOnClickListener(this);
+        prevButton.setOnClickListener(this);
+
         // Instantiate the gesture detector with the
         // application context and an implementation of
         // GestureDetector.OnGestureListener
@@ -243,9 +184,66 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         // listener.
         mDetector.setOnDoubleTapListener(this);
 
-        String RANDOM_IMAGE_URL = "http://"+ CURRENT_IP +":8000/experiment/random";
-        new DownloadImageJson().execute(RANDOM_IMAGE_URL);
+        initDownloadImageJson();
     }
 
+    public void initDownloadImageJson(){
+        String RANDOM_IMAGE_URL = "http://"+ CURRENT_IP +":8000/experiment/random";
+        new DownloadImageJson(this).execute(RANDOM_IMAGE_URL);
+    }
 
+    @Override
+    public void processFinish(String output) {
+        String jsonString;
+        String imageId, imageFileName = "";
+
+        jsonString = output;
+        Log.v("processingJson", output);
+
+        try {
+            JSONObject obj = new JSONObject(jsonString);
+            JSONArray bboxes = obj.getJSONArray("bboxes");
+            imageFileName = obj.getString("file_name");
+            boundaryList.clear();
+            for (int i = 0; i < bboxes.length(); i++)
+            {
+                boundaryList.add(new Boundary(bboxes.getJSONObject(i)));
+            }
+        } catch (JSONException e) {
+            Log.v("Oncreate", "Error while decoding json");
+            e.printStackTrace();
+        }
+
+        // this is the view on which you will listen for touch events
+        String IMAGE_URL_STRING = "http://"+ CURRENT_IP +":8000/static/" + imageFileName;
+        // downloads and sets the image
+//            new DownloadImageTask((ImageView) findViewById(R.id.imageView), MainActivity.this).execute(IMAGE_URL_STRING);
+        CircularProgressView progressView = (CircularProgressView) findViewById(R.id.progress_view);
+
+        new DownloadImageTask((ImageView) findViewById(R.id.imageView), progressView).execute(IMAGE_URL_STRING);
+
+        final ImageView iv = (ImageView) findViewById(R.id.imageView);
+        final TextView tv = (TextView) findViewById(R.id.textView);
+
+        iv.setOnTouchListener(new ImageView.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                tv.setText("points : " + String.valueOf(event.getX()) + "x" + String.valueOf(event.getY()));
+
+                for (Boundary b : boundaryList) {
+                    if (b.isInside(((double) event.getX()), (double) event.getY())) {
+                        try {
+                            tv.setText("Category : " + b.getCategoryName());
+                            tts.speak(String.valueOf(b.getCategoryName()), TextToSpeech.QUEUE_FLUSH, null);
+                        } catch (Exception e) {
+                            Log.v("tts", "error");
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                return true;
+            }
+        });
+
+    }
 }
