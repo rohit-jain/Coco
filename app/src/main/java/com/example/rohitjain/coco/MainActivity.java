@@ -196,12 +196,17 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         try {
             JSONObject obj = new JSONObject(jsonString);
             JSONArray bboxes = obj.getJSONArray("bboxes");
+            JSONArray ocr = obj.getJSONArray("ocr");
             imageFileName = obj.getString("file_name");
             boundaryList.clear();
             for (int i = 0; i < bboxes.length(); i++)
             {
-                boundaryList.add(new Boundary(bboxes.getJSONObject(i)));
+                boundaryList.add(new BoxBoundary(bboxes.getJSONObject(i)));
             }
+            for (int i = 0; i < ocr.length(); i++){
+                boundaryList.add(new AngleBoundary(bboxes.getJSONObject(i)));
+            }
+
         } catch (JSONException e) {
             Log.v("Oncreate", "Error while decoding json");
             e.printStackTrace();
@@ -225,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
                 for (Boundary b : boundaryList) {
 //                    Log.d("polygon","Checking "+ b.getCategoryName() );
-                    if (b.isInsidePolygon(((double) event.getX()), (double) event.getY())) {
+                    if (b.isInside(((double) event.getX()), (double) event.getY())) {
                         try {
                             tv.setText("Category : " + b.getCategoryName());
                             tts.speak(String.valueOf(b.getCategoryName()), TextToSpeech.QUEUE_FLUSH, null);
