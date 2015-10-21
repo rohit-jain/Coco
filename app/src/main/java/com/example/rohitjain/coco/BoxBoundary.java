@@ -9,7 +9,6 @@ import org.json.JSONObject;
 public class BoxBoundary extends Boundary {
 
     Integer categoryId;
-    String label;
 
     BoxBoundary(JSONObject jsonBbox) {
         super(jsonBbox);

@@ -76,9 +76,7 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
         // this is the view on which you will listen for touch events
         String IMAGE_URL_STRING = "http://"+ getString(R.string.CURRENT_IP) +":8000/static/" + imageFileName;
         // downloads and sets the image
-//            new DownloadImageTask((ImageView) findViewById(R.id.imageView), MainActivity.this).execute(IMAGE_URL_STRING);
         CircularProgressView progressView = (CircularProgressView) findViewById(R.id.progress_view);
-
         new DownloadImageTask((ImageView) findViewById(R.id.imageView2), progressView, true).execute(IMAGE_URL_STRING);
     }
 }
