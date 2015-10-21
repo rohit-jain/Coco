@@ -15,11 +15,15 @@ public class AngleBoundary extends Boundary {
 
             JSONObject bboxes = jsonBbox.getJSONObject("bbox");
             this.theta = bboxes.getDouble("a");
-
+            this.label = bboxes.getString("string");
         } catch (JSONException e) {
             e.printStackTrace();
         }
         setVertices();
+    }
+
+    String getLabel(){
+        return this.label;
     }
 
     void setVertices(){

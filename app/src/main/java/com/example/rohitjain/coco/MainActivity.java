@@ -228,12 +228,14 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             public boolean onTouch(View v, MotionEvent event) {
                 tv.setText("points : " + String.valueOf(event.getX()) + "x" + String.valueOf(event.getY()));
 
+                // TODO: Mark only one object touched at a time, right now overlapping objects get marked as touch
+
                 for (Boundary b : boundaryList) {
 //                    Log.d("polygon","Checking "+ b.getCategoryName() );
                     if (b.isInside(((double) event.getX()), (double) event.getY())) {
                         try {
-                            tv.setText("Category : " + b.getCategoryName());
-                            tts.speak(String.valueOf(b.getCategoryName()), TextToSpeech.QUEUE_FLUSH, null);
+                            tv.setText("Category : " + b.getLabel());
+                            tts.speak(String.valueOf(b.getLabel()), TextToSpeech.QUEUE_FLUSH, null);
                         } catch (Exception e) {
                             Log.v("tts", "error");
                             e.printStackTrace();

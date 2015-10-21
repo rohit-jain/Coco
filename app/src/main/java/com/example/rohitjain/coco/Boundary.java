@@ -16,9 +16,8 @@ public class Boundary {
     Double y;
     Double height;
     Double width;
-    Integer categoryId;
-    String categoryName;
     Boolean touched;
+    String label;
     ArrayList<Point> vertices = new ArrayList<Point>();
 
     class Point{
@@ -37,26 +36,21 @@ public class Boundary {
         return false;
     }
 
-    Integer getCategoryId(){
-        return this.categoryId;
-    }
-
-    String getCategoryName(){
-        return this.categoryName;
+    String getLabel(){
+        return this.label;
     }
 
     Boolean isTouched(){
         return this.touched;
     }
 
-    Boundary(Double x, Double y, Double height, Double width, Integer categoryId, String categoryName){
+    Boundary(Double x, Double y, Double height, Double width){
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-        this.categoryId = categoryId;
-        this.categoryName = categoryName;
         this.touched = false;
+        this.label = "";
     }
 
     Boundary(JSONObject jsonBbox){
@@ -67,8 +61,7 @@ public class Boundary {
             this.y = bboxes.getDouble("y");
             this.width = bboxes.getDouble("w");
             this.height = bboxes.getDouble("h");
-            this.categoryId = jsonBbox.getInt("category_id");
-            this.categoryName = jsonBbox.getString("category_name");
+            this.label = "";
             this.touched = false;
         } catch (JSONException e) {
             e.printStackTrace();

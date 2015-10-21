@@ -1,5 +1,6 @@
 package com.example.rohitjain.coco;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -7,9 +8,29 @@ import org.json.JSONObject;
  */
 public class BoxBoundary extends Boundary {
 
+    Integer categoryId;
+    String label;
+
     BoxBoundary(JSONObject jsonBbox) {
         super(jsonBbox);
+        try {
+            JSONObject bboxes = jsonBbox.getJSONObject("bbox");
+            this.categoryId = jsonBbox.getInt("category_id");
+            this.label = jsonBbox.getString("category_name");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         setVertices();
+    }
+
+
+    Integer getCategoryId(){
+        return this.categoryId;
+    }
+
+    String getLabel(){
+        return this.label;
     }
 
     Boolean isInside(Double touchX, Double touchY){
