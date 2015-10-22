@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 //            new DownloadImageTask((ImageView) findViewById(R.id.imageView), MainActivity.this).execute(IMAGE_URL_STRING);
         CircularProgressView progressView = (CircularProgressView) findViewById(R.id.progress_view);
 
-        new DownloadImageTask((ImageView) findViewById(R.id.imageView), progressView, true).execute(IMAGE_URL_STRING);
+        new DownloadImageTask((ImageView) findViewById(R.id.imageView), progressView, false).execute(IMAGE_URL_STRING);
 
         final ImageView iv = (ImageView) findViewById(R.id.imageView);
         final TextView tv = (TextView) findViewById(R.id.textView);
