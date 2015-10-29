@@ -35,7 +35,7 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
         nextButton.setOnClickListener(this);
         prevButton.setOnClickListener(this);
 
-        initDownloadImageJson();
+        initDownloadImageJson( getIntent().getExtras().getString("imageId"));
     }
 
     @Override
@@ -51,9 +51,9 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
     }
 
 
-    public void initDownloadImageJson(){
-        String RANDOM_IMAGE_URL = "http://"+ getString(R.string.CURRENT_IP) +":8000/experiment/random";
-        new DownloadImageJson(this).execute(RANDOM_IMAGE_URL);
+    public void initDownloadImageJson(String imageId){
+        String CHOSEN_IMAGE_URL = "http://"+ getString(R.string.CURRENT_IP) +":8000/experiment/surveyc/"+imageId;
+        new DownloadImageJson(this).execute(CHOSEN_IMAGE_URL);
     }
 
     @Override

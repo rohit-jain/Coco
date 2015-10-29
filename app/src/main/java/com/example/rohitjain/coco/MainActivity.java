@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
     private static final String DEBUG_TAG = "Gestures";
     private GestureDetectorCompat mDetector;
+    String imageId = "";
     TextToSpeech tts;
 
 
@@ -52,6 +53,9 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 //            getWindow().getDecorView().findViewById(R.id.imageView).invalidate();
 //            initDownloadImageJson();
             Intent intent = new Intent(MainActivity.this, CaptionActivity.class);
+            Bundle b = new Bundle();
+            b.putString("imageId", imageId); //Your id
+            intent.putExtras(b);
             startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
         }
         else if(v.getId() == R.id.prev){
@@ -197,6 +201,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             JSONArray bboxes = obj.getJSONArray("bboxes");
             JSONArray ocr = obj.getJSONArray("ocr");
             imageFileName = obj.getString("file_name");
+            imageId = obj.getString("image_id");
+
             boundaryList.clear();
             for (int i = 0; i < bboxes.length(); i++)
             {
