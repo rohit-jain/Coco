@@ -9,9 +9,14 @@ import org.json.JSONObject;
 public class BoxBoundary extends Boundary {
 
     Integer categoryId;
+    Double x;
+    Double y;
+    Double height;
+    Double width;
+
 
     BoxBoundary(JSONObject jsonBbox) {
-        super(jsonBbox);
+        super();
         try {
             JSONObject bboxes = jsonBbox.getJSONObject("bbox");
             this.categoryId = jsonBbox.getInt("category_id");

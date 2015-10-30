@@ -1,33 +1,27 @@
 package com.example.rohitjain.coco;
 
+import android.util.Log;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by rohitjain on 20/10/15.
+ * Created by rohitjain on 29/10/15.
  */
-public class AngleBoundary extends Boundary {
-    Double theta;
-    Double x;
-    Double y;
-    Double height;
-    Double width;
+public class PolygonBoundary extends Boundary{
 
-    AngleBoundary(JSONObject jsonBbox) {
+
+
+    PolygonBoundary(JSONObject polygonJson){
         super();
+        Log.d("polygon json", polygonJson.toString());
         try {
-
-            JSONObject bboxes = jsonBbox.getJSONObject("bbox");
-            this.theta = bboxes.getDouble("a");
-            this.label = bboxes.getString("string");
+            this.label = polygonJson.getString("category_name");
+            setVertices(polygonJson.getString("points"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        setVertices();
-    }
-
-    String getLabel(){
-        return this.label;
     }
 
     Boolean isInside(Double touchX, Double touchY){
@@ -65,15 +59,24 @@ public class AngleBoundary extends Boundary {
         return result;
     }
 
-    void setVertices(){
-        Double deltaX = (this.width * Math.cos(this.theta));
-        Double deltaY = (this.width * Math.cos(this.theta));
-        this.vertices.add(new Point( this.x, this.y ));
-        this.vertices.add(new Point( (this.x + deltaX ) , (this.y + deltaY ) ) );
-        this.vertices.add(new Point( (this.x + deltaX ),  (this.y + this.height - deltaY)));
-        this.vertices.add(new Point( this.x, this.y + height));
+
+    void setVertices(String pointsString){
+        JSONArray points = null;
+        try {
+            points = new JSONArray(pointsString);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        for(int i=0; i< points.length(); i++){
+            try {
+
+                JSONArray coords = points.getJSONArray(i);
+                Log.d("polygon json", coords.toString());
+                this.vertices.add(new Point(coords.getDouble(0), coords.getDouble(1)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
-
-
 
 }

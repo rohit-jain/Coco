@@ -12,10 +12,6 @@ import java.util.ArrayList;
  * Created by rohitjain on 11/10/15.
  */
 public class Boundary {
-    Double x;
-    Double y;
-    Double height;
-    Double width;
     Boolean touched;
     String label;
     ArrayList<Point> vertices = new ArrayList<Point>();
@@ -44,27 +40,11 @@ public class Boundary {
         return this.touched;
     }
 
-    Boundary(Double x, Double y, Double height, Double width){
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        this.touched = false;
+
+
+    Boundary(){
+
         this.label = "";
-    }
-
-    Boundary(JSONObject jsonBbox){
-
-        try {
-            JSONObject bboxes = jsonBbox.getJSONObject("bbox");
-            this.x = bboxes.getDouble("x");
-            this.y = bboxes.getDouble("y");
-            this.width = bboxes.getDouble("w");
-            this.height = bboxes.getDouble("h");
-            this.label = "";
-            this.touched = false;
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        this.touched = false;
     }
 }

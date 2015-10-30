@@ -50,8 +50,6 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     @Override
     public void onClick(View v) {
         if(v.getId() == R.id.next){
-//            getWindow().getDecorView().findViewById(R.id.imageView).invalidate();
-//            initDownloadImageJson();
             Intent intent = new Intent(MainActivity.this, CaptionActivity.class);
             Bundle b = new Bundle();
             b.putString("imageId", imageId); //Your id
@@ -199,15 +197,25 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         try {
             JSONObject obj = new JSONObject(jsonString);
             JSONArray bboxes = obj.getJSONArray("bboxes");
+            JSONArray segmentation = obj.getJSONArray("segmentation");
             JSONArray ocr = obj.getJSONArray("ocr");
             imageFileName = obj.getString("file_name");
+            Boolean RLE = obj.getBoolean("RLE");
             imageId = obj.getString("image_id");
 
             boundaryList.clear();
-            for (int i = 0; i < bboxes.length(); i++)
-            {
-                boundaryList.add(new BoxBoundary(bboxes.getJSONObject(i)));
+            if(RLE == true) {
+                for (int i = 0; i < bboxes.length(); i++)
+                {
+                    boundaryList.add(new BoxBoundary(bboxes.getJSONObject(i)));
+                }
             }
+            else {
+                for (int i = 0; i < segmentation.length(); i++) {
+                    boundaryList.add(new PolygonBoundary(segmentation.getJSONObject(i)));
+                }
+            }
+
             for (int i = 0; i < ocr.length(); i++){
                 boundaryList.add(new AngleBoundary(bboxes.getJSONObject(i)));
             }
@@ -223,7 +231,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 //            new DownloadImageTask((ImageView) findViewById(R.id.imageView), MainActivity.this).execute(IMAGE_URL_STRING);
         CircularProgressView progressView = (CircularProgressView) findViewById(R.id.progress_view);
 
-        new DownloadImageTask((ImageView) findViewById(R.id.imageView), progressView, false).execute(IMAGE_URL_STRING);
+        new DownloadImageTask((ImageView) findViewById(R.id.imageView), progressView, true).execute(IMAGE_URL_STRING);
 
         final ImageView iv = (ImageView) findViewById(R.id.imageView);
         final TextView tv = (TextView) findViewById(R.id.textView);
