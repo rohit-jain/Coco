@@ -71,7 +71,6 @@ public class PolygonBoundary extends Boundary{
             try {
 
                 JSONArray coords = points.getJSONArray(i);
-                Log.d("polygon json", coords.toString());
                 this.vertices.add(new Point(coords.getDouble(0), coords.getDouble(1)));
             } catch (JSONException e) {
                 e.printStackTrace();

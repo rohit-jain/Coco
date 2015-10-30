@@ -19,6 +19,10 @@ public class BoxBoundary extends Boundary {
         super();
         try {
             JSONObject bboxes = jsonBbox.getJSONObject("bbox");
+            this.x = bboxes.getDouble("x");
+            this.y = bboxes.getDouble("y");
+            this.width = bboxes.getDouble("w");
+            this.height = bboxes.getDouble("h");
             this.categoryId = jsonBbox.getInt("category_id");
             this.label = jsonBbox.getString("category_name");
         } catch (JSONException e) {
