@@ -24,8 +24,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Queue;
 
 
 public class MainActivity extends AppCompatActivity implements GestureDetector.OnGestureListener,
@@ -36,9 +38,14 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     String imageId = "";
     TextToSpeech tts;
 
-
+    HashMap<String, String> ttsMap = new HashMap<String, String>();
+    public static List<Boundary> ttsList = new ArrayList<Boundary>();
     // Bounding boxes and category id
     final List<Boundary> boundaryList = new ArrayList<Boundary>();
+
+    public static void removeFromTtsList(Boundary b){
+        ttsList.remove(b);
+    }
 
     @Override
     public void onInit(int status) {
@@ -225,6 +232,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             e.printStackTrace();
         }
 
+        tts.setOnUtteranceProgressListener(new TextSpeechHandler(boundaryList));
+
         // this is the view on which you will listen for touch events
         String IMAGE_URL_STRING = "http://"+ getString(R.string.CURRENT_IP) +":8000/static/" + imageFileName;
         // downloads and sets the image
@@ -248,7 +257,11 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                     if (b.isInside(((double) event.getX()), (double) event.getY())) {
                         try {
                             tv.setText("Category : " + b.getLabel());
-                            tts.speak(String.valueOf(b.getLabel()), TextToSpeech.QUEUE_FLUSH, null);
+                            if(!ttsList.contains(b)) {
+                                ttsMap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, Integer.toString(boundaryList.indexOf(b)));
+                                ttsList.add(b);
+                                tts.speak(String.valueOf(b.getLabel()), TextToSpeech.QUEUE_ADD, ttsMap);
+                            }
                         } catch (Exception e) {
                             Log.v("tts", "error");
                             e.printStackTrace();
