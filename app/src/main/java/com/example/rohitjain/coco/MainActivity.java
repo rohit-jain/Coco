@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     }
 
     public void initDownloadImageJson(){
-        String RANDOM_IMAGE_URL = "http://"+ getString(R.string.CURRENT_IP) +":8000/experiment/random";
+        String RANDOM_IMAGE_URL = "http://"+ getString(R.string.CURRENT_IP) +":8000/experiment/randomocr";
         Log.d("init download", RANDOM_IMAGE_URL);
         new DownloadImageJson(this).execute(RANDOM_IMAGE_URL);
     }
@@ -218,13 +218,14 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                 }
             }
             else {
+                Log.d("List", "Polygons");
                 for (int i = 0; i < segmentation.length(); i++) {
                     boundaryList.add(new PolygonBoundary(segmentation.getJSONObject(i)));
                 }
             }
 
             for (int i = 0; i < ocr.length(); i++){
-                boundaryList.add(new AngleBoundary(bboxes.getJSONObject(i)));
+                boundaryList.add(new AngleBoundary(ocr.getJSONObject(i)));
             }
 
         } catch (JSONException e) {

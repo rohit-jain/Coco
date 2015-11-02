@@ -1,5 +1,7 @@
 package com.example.rohitjain.coco;
 
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -18,8 +20,13 @@ public class AngleBoundary extends Boundary {
         try {
 
             JSONObject bboxes = jsonBbox.getJSONObject("bbox");
+            Log.d("Angle BBox", bboxes.toString());
+            this.x = bboxes.getDouble("x");
+            this.y = bboxes.getDouble("y");
+            this.width = bboxes.getDouble("w");
+            this.height = bboxes.getDouble("h");
             this.theta = bboxes.getDouble("a");
-            this.label = bboxes.getString("string");
+            this.label = "Text " + jsonBbox.getString("string");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -34,8 +41,7 @@ public class AngleBoundary extends Boundary {
         boolean result = false;
         int nVertices = this.vertices.size();
         int i,j;
-//        Log.d("polygon", touchX.toString() + "," + touchY.toString());
-//        Log.d("polygon", this.x.toString() + "," + this.y.toString() + "," + this.width.toString() + "," + this.height.toString());
+
         for( i=0, j = nVertices -1; i< nVertices; j = i++){
             Double vyi = this.vertices.get(i).y;
             Double vxi = this.vertices.get(i).x;
@@ -53,9 +59,6 @@ public class AngleBoundary extends Boundary {
 
                 if(condition_3) {
                     result = !result;
-
-//                    Log.d("polygon", vxi.toString() +"," + vyi.toString() +"," + vxj.toString()  +"," + vyj.toString() );
-//                    Log.d("polygon", condition_1.toString() + "," +condition_2.toString() +"," + condition_3.toString());
                 }
             }
         }
@@ -71,7 +74,7 @@ public class AngleBoundary extends Boundary {
         this.vertices.add(new Point( this.x, this.y ));
         this.vertices.add(new Point( (this.x + deltaX ) , (this.y + deltaY ) ) );
         this.vertices.add(new Point( (this.x + deltaX ),  (this.y + this.height - deltaY)));
-        this.vertices.add(new Point( this.x, this.y + height));
+        this.vertices.add(new Point( this.x, this.y + this.height));
     }
 
 
