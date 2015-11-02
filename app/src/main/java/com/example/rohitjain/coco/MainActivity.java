@@ -121,14 +121,31 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         int total = boundaryList.size();
         final TextView tv = (TextView) findViewById(R.id.textView);
 
+        HashMap<String, Integer> freq = new HashMap<String, Integer>();
         for(Boundary b:boundaryList){
-            if(b.isTouched() == true){
+            if(b.isTouched() == false){
+                String word = b.getLabel();
+                int count = freq.containsKey(word) ? freq.get(word) : 0;
+                freq.put(word, count + 1);
                 total -= 1;
             }
         }
 
-        String speechObjectsLeft = String.valueOf(total) + " left";
-        String textObjectsLeft = String.valueOf(total) + "objects left";
+        String speechObjectsLeft = "";
+
+        for(String k:freq.keySet()){
+            if(freq.get(k)!=1) {
+                speechObjectsLeft += freq.get(k) + " " + k + " ";
+            }else {
+                speechObjectsLeft += k + " ";
+            }
+        }
+
+        if( speechObjectsLeft != "")
+            speechObjectsLeft += "left";
+        else
+            speechObjectsLeft = "No objects left";
+        String textObjectsLeft = speechObjectsLeft;
         tts.speak( speechObjectsLeft, TextToSpeech.QUEUE_FLUSH, null);
         tv.setText(textObjectsLeft);
 
@@ -249,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         iv.setOnTouchListener(new ImageView.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                tv.setText("points : " + String.valueOf(event.getX()) + "x" + String.valueOf(event.getY()));
+//                tv.setText("points : " + String.valueOf(event.getX()) + "x" + String.valueOf(event.getY()));
 
                 // TODO: Mark only one object touched at a time, right now overlapping objects get marked as touch
 
