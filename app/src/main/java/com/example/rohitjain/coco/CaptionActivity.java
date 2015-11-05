@@ -8,6 +8,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.transition.Explode;
+import android.transition.Fade;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -82,7 +83,7 @@ public class CaptionActivity extends AppCompatActivity implements View.OnClickLi
         Log.d("Task download caption", CAPTION_URL);
         new DownloadImageJson(this).execute( CAPTION_URL );
         // set an exit transition
-        getWindow().setExitTransition(new Explode());
+        getWindow().setExitTransition(new Fade());
 
         FloatingActionButton nextButton = (FloatingActionButton)findViewById(R.id.next);
         FloatingActionButton prevButton = (FloatingActionButton)findViewById(R.id.prev);

@@ -26,8 +26,10 @@
             android:id="@+id/textView"
             android:layout_gravity="center_horizontal|bottom"
             android:textSize="@dimen/abc_text_size_body_2_material"
-            android:layout_above="@+id/prev"
-            android:layout_centerHorizontal="true" />
+            android:layout_above="@+id/captions_button"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentStart="true"
+            android:padding="5dp" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/next"
@@ -72,6 +74,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Show Captions"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@color/colorPrimary"
         android:id="@+id/captions_button"
         android:layout_marginBottom="47dp"
         android:layout_alignParentBottom="true"
@@ -81,8 +85,10 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
         android:text="Try Different Image"
         android:id="@+id/next_image_button"
+        android:backgroundTint="@color/colorPrimary"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true" />

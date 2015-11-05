@@ -9,6 +9,7 @@ import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.transition.Explode;
+import android.transition.Fade;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -191,9 +192,9 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         else {
             for (int i = 0; i < speechObjectsLeft.size(); i++) {
                 if (i != (speechObjectsLeft.size() - 1))
-                    textObjectsLeft += speechObjectsLeft.get(i) + ",";
+                    textObjectsLeft += ("\"" + speechObjectsLeft.get(i) +"\"" + ",");
                 else
-                    textObjectsLeft += speechObjectsLeft.get(i);
+                    textObjectsLeft += ("\"" + speechObjectsLeft.get(i) +"\"");
             }
         }
 
@@ -233,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         Log.d("Main", "Starting main");
 
         // set an exit transition
-        getWindow().setExitTransition(new Explode());
+        getWindow().setExitTransition(new Fade());
         tts = new TextToSpeech(this, this);
         setContentView(R.layout.activity_main);
 
@@ -259,7 +260,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     }
 
     public void initDownloadImageJson(){
-        String RANDOM_IMAGE_URL = "http://"+ getString(R.string.CURRENT_IP) +":8000/experiment/randomocr";
+        String RANDOM_IMAGE_URL = "http://"+ getString(R.string.CURRENT_IP) +":8000/experiment/random";
         Log.d("init download", RANDOM_IMAGE_URL);
         new DownloadImageJson(this).execute(RANDOM_IMAGE_URL);
     }
@@ -312,7 +313,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 //            new DownloadImageTask((ImageView) findViewById(R.id.imageView), MainActivity.this).execute(IMAGE_URL_STRING);
         CircularProgressView progressView = (CircularProgressView) findViewById(R.id.progress_view);
 
-        new DownloadImageTask((ImageView) findViewById(R.id.imageView), progressView, true).execute(IMAGE_URL_STRING);
+        new DownloadImageTask((ImageView) findViewById(R.id.imageView), progressView, false).execute(IMAGE_URL_STRING);
 
         final ImageView iv = (ImageView) findViewById(R.id.imageView);
         final TextView tv = (TextView) findViewById(R.id.textView);
