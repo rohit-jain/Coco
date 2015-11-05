@@ -10,6 +10,7 @@ import android.transition.Explode;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -31,11 +32,15 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
 
         FloatingActionButton nextButton = (FloatingActionButton)findViewById(R.id.next);
         FloatingActionButton prevButton = (FloatingActionButton)findViewById(R.id.prev);
+        Button yesButton = (Button) findViewById(R.id.yes);
+        Button noButton = (Button) findViewById(R.id.no);
 
         nextButton.setOnClickListener(this);
         prevButton.setOnClickListener(this);
+        yesButton.setOnClickListener(this);
+        noButton.setOnClickListener(this);
 
-        initDownloadImageJson( getIntent().getExtras().getString("imageId"));
+        initDownloadImageJson(getIntent().getExtras().getString("imageId"));
     }
 
     @Override
@@ -46,6 +51,11 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
         }
         else if(v.getId() == R.id.prev){
 
+        }
+        else {
+            finish();
+            Intent i = new Intent(this, MainActivity.class);
+            startActivity(i);
         }
 
     }

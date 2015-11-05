@@ -14,6 +14,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -37,6 +38,9 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     private GestureDetectorCompat mDetector;
     String imageId = "";
     TextToSpeech tts;
+    int GLOBAL_TOUCH_POSITION_X = 0;
+    int GLOBAL_TOUCH_CURRENT_POSITION_X = 0;
+    int pointerCount;
 
     HashMap<String, String> ttsMap = new HashMap<String, String>();
     public static List<Boundary> ttsList = new ArrayList<Boundary>();
@@ -56,15 +60,16 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
     @Override
     public void onClick(View v) {
-        if(v.getId() == R.id.next){
+        if(v.getId() == R.id.captions_button){
             Intent intent = new Intent(MainActivity.this, CaptionActivity.class);
             Bundle b = new Bundle();
             b.putString("imageId", imageId); //Your id
             intent.putExtras(b);
             startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
         }
-        else if(v.getId() == R.id.prev){
-
+        else if(v.getId() == R.id.next_image_button){
+            getWindow().getDecorView().findViewById(R.id.imageView).invalidate();
+            initDownloadImageJson();
         }
     }
 
@@ -72,9 +77,44 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
     @Override
     public boolean onTouchEvent(MotionEvent event){
+//        pointerCount = event.getPointerCount();
+//        Log.d(DEBUG_TAG, Integer.toString(pointerCount));
         this.mDetector.onTouchEvent(event);
+        //Number of touches
+//        if(pointerCount == 2){
+//            int action = event.getActionMasked();
+//            int actionIndex = event.getActionIndex();
+//            switch (action)
+//            {
+//                case MotionEvent.ACTION_DOWN:
+//                    GLOBAL_TOUCH_POSITION_X = (int) event.getX(1);
+//                    break;
+//                case MotionEvent.ACTION_UP:
+//                    GLOBAL_TOUCH_CURRENT_POSITION_X = 0;
+//                    getWindow().getDecorView().findViewById(R.id.imageView).invalidate();
+//                    initDownloadImageJson();
+//                    break;
+//                case MotionEvent.ACTION_MOVE:
+//
+//                    GLOBAL_TOUCH_CURRENT_POSITION_X = (int) event.getX(1);
+//                    int diff = GLOBAL_TOUCH_CURRENT_POSITION_X - GLOBAL_TOUCH_POSITION_X;
+//                    Log.d("double drag",Integer.toString(diff));
+//                    break;
+//                case MotionEvent.ACTION_POINTER_DOWN:
+//                    GLOBAL_TOUCH_POSITION_X = (int) event.getX(1);
+//                    break;
+//                default:
+//                    break;
+//            }
+//
+//        }
+//        else {
+//            GLOBAL_TOUCH_POSITION_X = 0;
+//            GLOBAL_TOUCH_CURRENT_POSITION_X = 0;
+//        }
         // Be sure to call the superclass implementation
         return super.onTouchEvent(event);
+
     }
 
     @Override
@@ -86,9 +126,12 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     @Override
     public boolean onFling(MotionEvent event1, MotionEvent event2,
                            float velocityX, float velocityY) {
-        Log.d(DEBUG_TAG, "onFling: " + event1.toString() + event2.toString());
-        getWindow().getDecorView().findViewById(R.id.imageView).invalidate();
-        initDownloadImageJson();
+//        Log.d(DEBUG_TAG, "onFling: " + event1.toString() + event2.toString());
+//        Log.d(DEBUG_TAG, Integer.toString(pointerCount));
+//        if(pointerCount == 2) {
+//            getWindow().getDecorView().findViewById(R.id.imageView).invalidate();
+//            initDownloadImageJson();
+//        }
         return true;
     }
 
@@ -131,24 +174,31 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             }
         }
 
-        String speechObjectsLeft = "";
+        List<String> speechObjectsLeft = new ArrayList<String>();
 
         for(String k:freq.keySet()){
             if(freq.get(k)!=1) {
-                speechObjectsLeft += freq.get(k) + " " + k + " ";
+                speechObjectsLeft.add(freq.get(k) + " " + k );
             }else {
-                speechObjectsLeft += k + " ";
+                speechObjectsLeft.add(k) ;
             }
         }
 
-        if( speechObjectsLeft != "")
-            speechObjectsLeft += "left";
-        else
-            speechObjectsLeft = "No objects left";
-        String textObjectsLeft = speechObjectsLeft;
-        tts.speak( speechObjectsLeft, TextToSpeech.QUEUE_FLUSH, null);
-        tv.setText(textObjectsLeft);
+        String textObjectsLeft = "";
 
+        if( speechObjectsLeft.size() == 0 )
+            textObjectsLeft = "No objects left";
+        else {
+            for (int i = 0; i < speechObjectsLeft.size(); i++) {
+                if (i != (speechObjectsLeft.size() - 1))
+                    textObjectsLeft += speechObjectsLeft.get(i) + ",";
+                else
+                    textObjectsLeft += speechObjectsLeft.get(i);
+            }
+        }
+
+        tts.speak( textObjectsLeft, TextToSpeech.QUEUE_FLUSH, null);
+        tv.setText(textObjectsLeft);
 
         return true;
     }
@@ -189,9 +239,13 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
         FloatingActionButton nextButton = (FloatingActionButton)findViewById(R.id.next);
         FloatingActionButton prevButton = (FloatingActionButton)findViewById(R.id.prev);
+        Button nextImageButton = (Button) findViewById(R.id.next_image_button );
+        Button showCaptionButton = (Button) findViewById(R.id.captions_button );
 
         nextButton.setOnClickListener(this);
         prevButton.setOnClickListener(this);
+        nextImageButton.setOnClickListener(this);
+        showCaptionButton.setOnClickListener(this);
 
         // Instantiate the gesture detector with the
         // application context and an implementation of
