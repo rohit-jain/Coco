@@ -79,7 +79,7 @@ public class CaptionActivity extends AppCompatActivity implements View.OnClickLi
         progressView.setVisibility(View.VISIBLE);
         progressView.startAnimation();
 
-        String CAPTION_URL = "http://"+ getString(R.string.CURRENT_IP) +":8000/experiment/surveyq/" + imageId;
+        String CAPTION_URL = "http://"+ getString(R.string.CURRENT_IP) +"/experiment/surveyq/" + imageId;
         Log.d("Task download caption", CAPTION_URL);
         new DownloadImageJson(this).execute( CAPTION_URL );
         // set an exit transition

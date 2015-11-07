@@ -63,7 +63,7 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
 
 
     public void initDownloadImageJson(String imageId){
-        String CHOSEN_IMAGE_URL = "http://"+ getString(R.string.CURRENT_IP) +":8000/experiment/surveyc/"+imageId;
+        String CHOSEN_IMAGE_URL = "http://"+ getString(R.string.CURRENT_IP) +"/experiment/surveyc/"+imageId;
         new DownloadImageJson(this).execute(CHOSEN_IMAGE_URL);
     }
 
@@ -85,7 +85,7 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
         }
 
         // this is the view on which you will listen for touch events
-        String IMAGE_URL_STRING = "http://"+ getString(R.string.CURRENT_IP) +":8000/static/" + imageFileName;
+        String IMAGE_URL_STRING = "http://"+ getString(R.string.CURRENT_IP) +"/static/" + imageFileName;
         // downloads and sets the image
         CircularProgressView progressView = (CircularProgressView) findViewById(R.id.progress_view);
         new DownloadImageTask((ImageView) findViewById(R.id.imageView2), progressView, true).execute(IMAGE_URL_STRING);

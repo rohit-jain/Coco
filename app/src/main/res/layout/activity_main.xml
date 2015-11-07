@@ -4,13 +4,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context=".MainActivity">
 
-        <ImageView
+
+    <ImageView
             android:adjustViewBounds="true"
             android:background="@android:color/darker_gray"
             android:layout_width="wrap_content"
@@ -18,20 +15,21 @@
             android:id="@+id/imageView"
             android:layout_gravity="center_horizontal|top"
             android:foregroundGravity="center_horizontal"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"/>
 
-        <TextView
-            android:layout_width="155dp"
-            android:layout_height="69dp"
-            android:id="@+id/textView"
-            android:layout_gravity="center_horizontal|bottom"
-            android:textSize="@dimen/abc_text_size_body_2_material"
-            android:layout_above="@+id/captions_button"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentStart="true"
-            android:padding="5dp" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="69dp"
+        android:id="@+id/textView"
+        android:layout_gravity="center_horizontal|bottom"
+        android:textSize="@dimen/abc_text_size_body_2_material"
+        android:padding="5dp"
+        android:layout_above="@+id/captions_button"
+        android:layout_toEndOf="@+id/next" />
 
-        <android.support.design.widget.FloatingActionButton
+
+    <android.support.design.widget.FloatingActionButton
             android:id="@+id/next"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -45,7 +43,19 @@
             android:layout_marginBottom="46dp"
             android:visibility="gone"/>
 
-        <android.support.design.widget.FloatingActionButton
+    <com.github.rahatarmanahmed.cpv.CircularProgressView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/progress_view"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:cpv_indeterminate="true"
+        app:cpv_color="#2196F3"
+        android:layout_gravity="center_horizontal|top"
+        android:layout_marginTop="69dp"
+        android:layout_below="@+id/next"
+        android:layout_centerHorizontal="true" />
+
+    <android.support.design.widget.FloatingActionButton
             android:id="@+id/prev"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -57,18 +67,6 @@
             android:layout_alignTop="@+id/next"
             android:layout_alignParentStart="true"
             android:visibility="gone"/>
-
-        <com.github.rahatarmanahmed.cpv.CircularProgressView
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/progress_view"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            app:cpv_indeterminate="true"
-            app:cpv_color="#2196F3"
-            android:layout_gravity="center_horizontal|top"
-            android:layout_below="@+id/textView"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="64dp"/>
 
     <Button
         android:layout_width="wrap_content"
@@ -92,5 +90,167 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true" />
+
+    <RelativeLayout
+        android:id="@+id/overlayOnBoarding"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#900000FF"
+        android:clickable="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:translationZ="30dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:adjustViewBounds="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageBlankView"
+            android:background="@android:color/darker_gray"
+            android:layout_gravity="center_horizontal|top"
+            android:foregroundGravity="center_horizontal"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/arrow"
+            android:id="@+id/imageArrow"
+            android:layout_alignStart="@+id/textView3"
+            android:layout_marginTop="115dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="Touch and drag. Find objects inside the box."
+            android:textSize="20sp"
+            android:textColor="@android:color/white"
+            android:id="@+id/textView3"
+            android:layout_below="@+id/imageArrow"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:textAlignment="center" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Got It"
+            android:textColor="#900000FF"
+            android:id="@+id/buttonOverlay1"
+            android:layout_below="@+id/textView3"
+            android:layout_alignStart="@+id/textView3"
+            android:layout_alignEnd="@+id/textView3" />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/overlayOnBoarding2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#800000FF"
+        android:clickable="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:translationZ="30dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/double_tap"
+            android:id="@+id/doubleTapImage"
+            android:layout_marginBottom="89dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="Double tap off the image to find the objects left"
+            android:textSize="20sp"
+            android:padding="20dp"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:id="@+id/doubleTapText"
+            android:layout_above="@+id/buttonOverlay2" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Got It"
+            android:id="@+id/buttonOverlay2"
+            android:layout_above="@+id/doubleTapImage"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:textColor="#900000FF" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/overlayOnBoarding3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#800000FF"
+        android:clickable="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:translationZ="30dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:adjustViewBounds="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageBlankView2"
+            android:background="@android:color/darker_gray"
+            android:layout_gravity="center_horizontal|top"
+            android:foregroundGravity="center_horizontal"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/arrow_down"
+            android:id="@+id/imageArrow2"
+            android:layout_alignParentBottom="true"
+            android:layout_alignStart="@+id/imageBlankView2"
+            android:layout_marginBottom="87dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="See if you can guess what the image is after touching"
+            android:textSize="20sp"
+            android:padding="20dp"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:id="@+id/textView4"
+            android:layout_above="@+id/buttonOverlay3"
+            android:layout_alignParentStart="true" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Got It"
+            android:id="@+id/buttonOverlay3"
+            android:layout_above="@+id/imageArrow2"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:textColor="#900000FF" />
+
+    </RelativeLayout>
+
 
 </RelativeLayout>

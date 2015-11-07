@@ -2,6 +2,7 @@ package com.example.rohitjain.coco;
 
 import android.app.ActivityOptions;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.support.design.widget.FloatingActionButton;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
@@ -42,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     int GLOBAL_TOUCH_POSITION_X = 0;
     int GLOBAL_TOUCH_CURRENT_POSITION_X = 0;
     int pointerCount;
+    Boolean firstTime = Boolean.FALSE;
 
     HashMap<String, String> ttsMap = new HashMap<String, String>();
     public static List<Boundary> ttsList = new ArrayList<Boundary>();
@@ -80,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     public boolean onTouchEvent(MotionEvent event){
 //        pointerCount = event.getPointerCount();
 //        Log.d(DEBUG_TAG, Integer.toString(pointerCount));
+
         this.mDetector.onTouchEvent(event);
         //Number of touches
 //        if(pointerCount == 2){
@@ -247,6 +251,52 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         prevButton.setOnClickListener(this);
         nextImageButton.setOnClickListener(this);
         showCaptionButton.setOnClickListener(this);
+        final String PREFS_NAME = "MyPrefsFile";
+
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+
+        if (settings.getBoolean("my_first_time", true)) {
+            //the app is being launched for first time, do something
+            Log.d("Comments", "First time");
+            firstTime = Boolean.TRUE;
+            // first time task
+            final View overlay = findViewById(R.id.overlayOnBoarding);
+            final View overlay2 = findViewById(R.id.overlayOnBoarding2);
+            final View overlay3 = findViewById(R.id.overlayOnBoarding3);
+
+            overlay.setVisibility(View.VISIBLE);
+
+            Button overlayButton1 = (Button) findViewById(R.id.buttonOverlay1);
+            Button overlayButton2 = (Button) findViewById(R.id.buttonOverlay2);
+            Button overlayButton3 = (Button) findViewById(R.id.buttonOverlay3);
+
+            overlayButton1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    overlay.setVisibility(View.GONE);
+                    overlay2.setVisibility(View.VISIBLE);
+                }
+            });
+
+            overlayButton2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    overlay2.setVisibility(View.GONE);
+                    overlay3.setVisibility(View.VISIBLE);
+                }
+            });
+
+            overlayButton3.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    overlay3.setVisibility(View.GONE);
+                }
+            });
+
+
+            // record the fact that the app has been started at least once
+            settings.edit().putBoolean("my_first_time", false).commit();
+        }
 
         // Instantiate the gesture detector with the
         // application context and an implementation of
@@ -260,7 +310,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     }
 
     public void initDownloadImageJson(){
-        String RANDOM_IMAGE_URL = "http://"+ getString(R.string.CURRENT_IP) +":8000/experiment/random";
+        String RANDOM_IMAGE_URL = "http://"+ getString(R.string.CURRENT_IP) +"/experiment/random";
         Log.d("init download", RANDOM_IMAGE_URL);
         new DownloadImageJson(this).execute(RANDOM_IMAGE_URL);
     }
@@ -308,13 +358,17 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         tts.setOnUtteranceProgressListener(new TextSpeechHandler(boundaryList));
 
         // this is the view on which you will listen for touch events
-        String IMAGE_URL_STRING = "http://"+ getString(R.string.CURRENT_IP) +":8000/static/" + imageFileName;
+        String IMAGE_URL_STRING = "http://"+ getString(R.string.CURRENT_IP) +"/static/" + imageFileName;
         // downloads and sets the image
 //            new DownloadImageTask((ImageView) findViewById(R.id.imageView), MainActivity.this).execute(IMAGE_URL_STRING);
         CircularProgressView progressView = (CircularProgressView) findViewById(R.id.progress_view);
 
-        new DownloadImageTask((ImageView) findViewById(R.id.imageView), progressView, false).execute(IMAGE_URL_STRING);
-
+        if(firstTime == true) {
+            new DownloadImageTask((ImageView) findViewById(R.id.imageView), (ImageView) findViewById(R.id.imageBlankView), progressView, false).execute(IMAGE_URL_STRING);
+        }
+        else{
+            new DownloadImageTask((ImageView) findViewById(R.id.imageView), null, progressView, false).execute(IMAGE_URL_STRING);
+        }
         final ImageView iv = (ImageView) findViewById(R.id.imageView);
         final TextView tv = (TextView) findViewById(R.id.textView);
 
