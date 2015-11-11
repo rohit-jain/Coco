@@ -83,13 +83,13 @@ public class CaptionActivity extends AppCompatActivity implements View.OnClickLi
         Log.d("Task download caption", CAPTION_URL);
         new DownloadImageJson(this).execute( CAPTION_URL );
         // set an exit transition
-        getWindow().setExitTransition(new Fade());
+//        getWindow().setExitTransition(new Fade());
 
-        FloatingActionButton nextButton = (FloatingActionButton)findViewById(R.id.next);
-        FloatingActionButton prevButton = (FloatingActionButton)findViewById(R.id.prev);
+//        FloatingActionButton nextButton = (FloatingActionButton)findViewById(R.id.next);
+//        FloatingActionButton prevButton = (FloatingActionButton)findViewById(R.id.prev);
 
-        nextButton.setOnClickListener(this);
-        prevButton.setOnClickListener(this);
+//        nextButton.setOnClickListener(this);
+//        prevButton.setOnClickListener(this);
 
     }
 
@@ -97,17 +97,16 @@ public class CaptionActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View v) {
         if(v.getId() == R.id.next){
             Intent intent = new Intent(CaptionActivity.this, ImageActivity.class);
-            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
-        }
-        else if(v.getId() == R.id.prev){
-
+//            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
+            startActivity(intent);
         }
         else{
             Intent intent = new Intent(CaptionActivity.this, ImageActivity.class);
             Bundle b = new Bundle();
             b.putString("imageId", captionMapping.get(v.getId()));
             intent.putExtras(b);
-            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
+//            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
+            startActivity(intent);
         }
 
     }

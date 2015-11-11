@@ -69,7 +69,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             Bundle b = new Bundle();
             b.putString("imageId", imageId); //Your id
             intent.putExtras(b);
-            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
+//            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
+            startActivity(intent);
         }
         else if(v.getId() == R.id.next_image_button){
             getWindow().getDecorView().findViewById(R.id.imageView).invalidate();
@@ -238,17 +239,17 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         Log.d("Main", "Starting main");
 
         // set an exit transition
-        getWindow().setExitTransition(new Fade());
+//        getWindow().setExitTransition(new Fade());
         tts = new TextToSpeech(this, this);
         setContentView(R.layout.activity_main);
 
-        FloatingActionButton nextButton = (FloatingActionButton)findViewById(R.id.next);
-        FloatingActionButton prevButton = (FloatingActionButton)findViewById(R.id.prev);
+//        FloatingActionButton nextButton = (FloatingActionButton)findViewById(R.id.next);
+//        FloatingActionButton prevButton = (FloatingActionButton)findViewById(R.id.prev);
         Button nextImageButton = (Button) findViewById(R.id.next_image_button );
         Button showCaptionButton = (Button) findViewById(R.id.captions_button );
 
-        nextButton.setOnClickListener(this);
-        prevButton.setOnClickListener(this);
+//        nextButton.setOnClickListener(this);
+//        prevButton.setOnClickListener(this);
         nextImageButton.setOnClickListener(this);
         showCaptionButton.setOnClickListener(this);
         final String PREFS_NAME = "MyPrefsFile";
