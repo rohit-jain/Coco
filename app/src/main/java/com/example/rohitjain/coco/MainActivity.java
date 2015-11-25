@@ -31,7 +31,7 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity implements GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener, OnInitListener, View.OnClickListener, HandleResponse{
 
-    private static final String GESTURE_DEBUG_TAG = "Main Activity Gestures", DOWNLOAD_TAG = "Download", TTS_TAG = "TTS";
+    private static final String GESTURE_DEBUG_TAG = "Main Activity Gestures", DOWNLOAD_TAG = "Download", TTS_TAG = "TTS", ACTIVITY_TAG = "MAIN ACTIVITY";
     private GestureDetectorCompat mDetector;
     String imageId = "";
     TextToSpeech tts;
@@ -56,15 +56,19 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Log.v("Main Activity", "Starting main activity");
+        Log.v(ACTIVITY_TAG, "Creating main activity");
+
+        if(tts == null){
+            tts = new TextToSpeech(this, this);
+        }
+
+        // Download json for the image to be shown
+        initDownloadImageJson();
 
         // initialize shared preferences settings
         final String SHARED_PREFERENCE_FILE = "COCO_PREFERENCES";
         final String SHOWN_OVERLAY = "Shown Overlay";
         SharedPreferences settings = getSharedPreferences(SHARED_PREFERENCE_FILE, MODE_PRIVATE);
-
-        // instantiate text to speech object
-        tts = new TextToSpeech(this, this);
 
         // Instantiate the gesture detector with the application context and an implementation of
         // GestureDetector.OnGestureListener
@@ -126,6 +130,24 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             settings.edit().putBoolean(SHOWN_OVERLAY, false).commit();
         }
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();  // Always call the superclass method first
+        Log.v(ACTIVITY_TAG, "Starting Main Activity");
+
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();  // Always call the superclass method first
+        Log.v(ACTIVITY_TAG, "Re-starting Main Activity");
+
+        if(tts == null){
+            tts = new TextToSpeech(this, this);
+        }
+
         // Download json for the image to be shown
         initDownloadImageJson();
     }
@@ -135,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
      */
     public void initDownloadImageJson(){
         String RANDOM_IMAGE_URL = "http://"+ getString(R.string.CURRENT_IP) +"/experiment/random";
-        Log.v("Main Activity", "start download image json");
+        Log.v(DOWNLOAD_TAG, "start download image json");
         // Async task to download image json data from the url
         // initialised with the activity as callback
         new DownloadImageJson(this).execute(RANDOM_IMAGE_URL);
@@ -221,9 +243,11 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
         setBoundaries(jsonString);
 
+        // instantiate text to speech object
         tts.setOnUtteranceProgressListener(new TextSpeechHandler(boundaryList, this));
         ttsList = new ArrayList<Boundary>();
         ttsMap = new HashMap<String, String>();
+
 
         final ImageView iv = (ImageView) findViewById(R.id.imageView);
         final TextView tv = (TextView) findViewById(R.id.textObject);
@@ -314,7 +338,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             new DownloadImageTask((ImageView) findViewById(R.id.imageView), (ImageView) findViewById(R.id.imageBlankView), progressView, false).execute(IMAGE_URL_STRING);
         }
         else{
-            new DownloadImageTask((ImageView) findViewById(R.id.imageView), null, progressView, false).execute(IMAGE_URL_STRING);
+            new DownloadImageTask((ImageView) findViewById(R.id.imageView), null, progressView, true).execute(IMAGE_URL_STRING);
         }
     }
 
@@ -330,6 +354,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     protected void onDestroy() {
         // Don't forget to shutdown!
         if (tts != null) {
+            Log.v("Main", "destroying tts");
             tts.stop();
             tts.shutdown();
         }
