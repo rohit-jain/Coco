@@ -35,15 +35,12 @@ public class CaptionActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void processFinish(String output) {
-        String jsonString;
-        String imageFileName = "";
         ArrayList<TextView> tvs = new ArrayList<TextView>();
 
         tvs.add((TextView)findViewById(R.id.c1));
         tvs.add((TextView)findViewById(R.id.c2));
         tvs.add((TextView)findViewById(R.id.c3));
 
-        jsonString = output;
         Log.v("processingJson", output);
 
         try {
@@ -82,32 +79,16 @@ public class CaptionActivity extends AppCompatActivity implements View.OnClickLi
         String CAPTION_URL = "http://"+ getString(R.string.CURRENT_IP) +"/experiment/surveyq/" + imageId;
         Log.d("Task download caption", CAPTION_URL);
         new DownloadImageJson(this).execute( CAPTION_URL );
-        // set an exit transition
-//        getWindow().setExitTransition(new Fade());
-
-//        FloatingActionButton nextButton = (FloatingActionButton)findViewById(R.id.next);
-//        FloatingActionButton prevButton = (FloatingActionButton)findViewById(R.id.prev);
-
-//        nextButton.setOnClickListener(this);
-//        prevButton.setOnClickListener(this);
 
     }
 
     @Override
     public void onClick(View v) {
-        if(v.getId() == R.id.next){
-            Intent intent = new Intent(CaptionActivity.this, ImageActivity.class);
-//            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
-            startActivity(intent);
-        }
-        else{
-            Intent intent = new Intent(CaptionActivity.this, ImageActivity.class);
-            Bundle b = new Bundle();
-            b.putString("imageId", captionMapping.get(v.getId()));
-            intent.putExtras(b);
-//            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
-            startActivity(intent);
-        }
+        Intent intent = new Intent(CaptionActivity.this, ImageActivity.class);
+        Bundle b = new Bundle();
+        b.putString("imageId", captionMapping.get(v.getId()));
+        intent.putExtras(b);
+        startActivity(intent);
 
     }
 }

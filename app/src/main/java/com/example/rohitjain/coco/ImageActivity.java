@@ -27,16 +27,9 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image);
 
-        // set an exit transition
-//        getWindow().setExitTransition(new Explode());
-
-//        FloatingActionButton nextButton = (FloatingActionButton)findViewById(R.id.next);
-//        FloatingActionButton prevButton = (FloatingActionButton)findViewById(R.id.prev);
         Button yesButton = (Button) findViewById(R.id.yes);
         Button noButton = (Button) findViewById(R.id.no);
 
-//        nextButton.setOnClickListener(this);
-//        prevButton.setOnClickListener(this);
         yesButton.setOnClickListener(this);
         noButton.setOnClickListener(this);
 
@@ -45,19 +38,11 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-        if(v.getId() == R.id.next){
-//            Intent intent = new Intent(CaptionActivity.this, ImageActivity.class);
-//            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
-        }
-//        else if(v.getId() == R.id.prev){
-//
-//        }
-        else {
-            finish();
-            Intent i = new Intent(getApplicationContext(), MainActivity.class);
-            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(i);
-        }
+
+        finish();
+        Intent i = new Intent(getApplicationContext(), MainActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(i);
 
     }
 
