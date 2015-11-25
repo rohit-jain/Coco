@@ -7,6 +7,7 @@ import android.speech.tts.TextToSpeech.OnInitListener;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.AppCompatButton;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -35,13 +36,11 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     private GestureDetectorCompat mDetector;
     String imageId = "";
     TextToSpeech tts;
-    Boolean firstTime = Boolean.FALSE;
-
+    TextView tv;
     HashMap<String, String> ttsMap;
-    public static List<Boundary> ttsList;
-
-    // Bounding boxes and category id
-    final List<Boundary> boundaryList = new ArrayList<Boundary>();
+    List<Boundary> ttsList;
+    List<Boundary> boundaryList;
+    Boolean firstTime = Boolean.FALSE;
 
     @Override
     public void onInit(int status) {
@@ -62,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             tts = new TextToSpeech(this, this);
         }
 
+        boundaryList = new ArrayList<Boundary>();
         // Download json for the image to be shown
         initDownloadImageJson();
 
@@ -81,6 +81,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         // Instantiate buttons and set click listeners
         Button nextImageButton = (Button) findViewById(R.id.next_image_button );
         Button showCaptionButton = (Button) findViewById(R.id.captions_button );
+        // text view to display objects tapped & left
+        tv = (TextView) findViewById(R.id.textObject);
 
         nextImageButton.setOnClickListener(this);
         showCaptionButton.setOnClickListener(this);
@@ -150,6 +152,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
         // Download json for the image to be shown
         initDownloadImageJson();
+
+        tv.setText("");
     }
 
     /*
@@ -200,9 +204,6 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         String textObjectsLeft = "";
         HashMap<String, Integer> freq = new HashMap<String, Integer>();
 
-        // text view to display objects left
-        final TextView tv = (TextView) findViewById(R.id.textObject);
-
         // Count frequency of each type of object that is not touched
         for(Boundary b:boundaryList){
             if(b.isTouched() == false){
@@ -250,7 +251,6 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
 
         final ImageView iv = (ImageView) findViewById(R.id.imageView);
-        final TextView tv = (TextView) findViewById(R.id.textObject);
 
         // Handle touch event on image
         iv.setOnTouchListener(new ImageView.OnTouchListener() {
