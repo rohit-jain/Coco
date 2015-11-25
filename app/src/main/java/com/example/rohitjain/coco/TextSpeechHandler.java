@@ -11,9 +11,13 @@ import java.util.List;
 public class TextSpeechHandler extends UtteranceProgressListener {
 
     List<Boundary> boundaryList = new ArrayList<Boundary>();
+    HandleResponse delegate=null;
 
-    TextSpeechHandler(List<Boundary> boundaryList){
+
+    TextSpeechHandler(List<Boundary> boundaryList, HandleResponse delegate){
+
         this.boundaryList = boundaryList;
+        this.delegate = delegate;
     }
 
     @Override
@@ -23,7 +27,7 @@ public class TextSpeechHandler extends UtteranceProgressListener {
 
     @Override
     public void onDone(String utteranceId) {
-        MainActivity.removeFromTtsList(boundaryList.get(Integer.parseInt(utteranceId)));
+        this.delegate.removeFromTtsList(boundaryList.get(Integer.parseInt(utteranceId)));
     }
 
     @Override

@@ -53,7 +53,7 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
     }
 
     @Override
-    public void processFinish(String output) {
+    public void downloadComplete(String output) {
         String jsonString;
         String imageFileName = "";
 
@@ -74,5 +74,11 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
         // downloads and sets the image
         CircularProgressView progressView = (CircularProgressView) findViewById(R.id.progress_view);
         new DownloadImageTask((ImageView) findViewById(R.id.imageView2), progressView, true).execute(IMAGE_URL_STRING);
+    }
+
+
+    @Override
+    public void removeFromTtsList(Boundary b) {
+
     }
 }

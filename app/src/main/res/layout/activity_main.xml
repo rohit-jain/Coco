@@ -22,9 +22,9 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="69dp"
-            android:id="@+id/textView"
+            android:id="@+id/textObject"
             android:layout_gravity="center_horizontal|bottom"
-            android:textSize="@dimen/abc_text_size_body_2_material"
+            android:textAppearance="@android:style/TextAppearance.Medium"
             android:padding="5dp"
             android:layout_above="@+id/captions_button" />
 

@@ -34,7 +34,7 @@ public class CaptionActivity extends AppCompatActivity implements View.OnClickLi
     HashMap<Integer, String> captionMapping = new HashMap<Integer, String>();
 
     @Override
-    public void processFinish(String output) {
+    public void downloadComplete(String output) {
         ArrayList<TextView> tvs = new ArrayList<TextView>();
 
         tvs.add((TextView)findViewById(R.id.c1));
@@ -89,6 +89,11 @@ public class CaptionActivity extends AppCompatActivity implements View.OnClickLi
         b.putString("imageId", captionMapping.get(v.getId()));
         intent.putExtras(b);
         startActivity(intent);
+
+    }
+
+    @Override
+    public void removeFromTtsList(Boundary b) {
 
     }
 }

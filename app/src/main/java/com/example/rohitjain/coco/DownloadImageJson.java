@@ -13,6 +13,7 @@ import java.net.URL;
  */
 public class DownloadImageJson extends AsyncTask<String, Void, String> {
 
+    // callback
     HandleResponse delegate=null;
 
     public DownloadImageJson(HandleResponse delegate){
@@ -59,7 +60,7 @@ public class DownloadImageJson extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPostExecute(String output) {
-        this.delegate.processFinish(output);
+        this.delegate.downloadComplete(output);
     }
 }
 
