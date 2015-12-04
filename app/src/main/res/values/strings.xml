@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">Coco Reader</string>
-    <string name="CURRENT_IP">ec2-54-174-182-50.compute-1.amazonaws.com</string>
+    <string name="CURRENT_IP">52.23.233.225</string>
 </resources>

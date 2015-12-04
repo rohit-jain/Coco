@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -45,8 +46,10 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
     @Override
     public void onInit(int status) {
+        Float speechRate = new Float(2.0);
         if(status != TextToSpeech.ERROR) {
             tts.setLanguage(Locale.US);
+            tts.setSpeechRate(speechRate);
         }
     }
 
@@ -339,7 +342,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             new DownloadImageTask((ImageView) findViewById(R.id.imageView), (ImageView) findViewById(R.id.imageBlankView), progressView, false).execute(IMAGE_URL_STRING);
         }
         else{
-            new DownloadImageTask((ImageView) findViewById(R.id.imageView), null, progressView, true).execute(IMAGE_URL_STRING);
+            new DownloadImageTask((ImageView) findViewById(R.id.imageView), null, progressView, false).execute(IMAGE_URL_STRING);
         }
     }
 
