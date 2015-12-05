@@ -30,6 +30,7 @@ import java.util.List;
 public class CaptionActivity extends AppCompatActivity implements View.OnClickListener, HandleResponse{
 
     String imageId;
+    int captionsUsed, doubleTapUsed;
     CircularProgressView progressView;
     HashMap<Integer, String> captionMapping = new HashMap<Integer, String>();
 
@@ -71,6 +72,8 @@ public class CaptionActivity extends AppCompatActivity implements View.OnClickLi
 
         Bundle b = getIntent().getExtras();
         imageId = b.getString("imageId");
+        captionsUsed = b.getInt("captionsUsed");
+        doubleTapUsed = b.getInt("doubleTapUsed");
 
         progressView = (CircularProgressView) findViewById(R.id.progress_view);
         progressView.setVisibility(View.VISIBLE);
@@ -78,7 +81,7 @@ public class CaptionActivity extends AppCompatActivity implements View.OnClickLi
 
         String CAPTION_URL = "http://"+ getString(R.string.CURRENT_IP) +"/experiment/surveyq/" + imageId;
         Log.d("Task download caption", CAPTION_URL);
-        new DownloadImageJson(this).execute( CAPTION_URL );
+        new DownloadImageJson(this, DownloadImageJson.TaskType.DOWNLOAD_IMAGE).execute( CAPTION_URL );
 
     }
 
@@ -86,7 +89,11 @@ public class CaptionActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View v) {
         Intent intent = new Intent(CaptionActivity.this, ImageActivity.class);
         Bundle b = new Bundle();
-        b.putString("imageId", captionMapping.get(v.getId()));
+        b.putString("captionImageId", captionMapping.get(v.getId()));
+        b.putString("imageId", imageId); //Your id
+        b.putInt("captionsUsed", captionsUsed);
+        b.putInt("doubleTapUsed", doubleTapUsed);
+
         intent.putExtras(b);
         startActivity(intent);
 
@@ -94,6 +101,11 @@ public class CaptionActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void removeFromTtsList(Boundary b) {
+
+    }
+
+    @Override
+    public void setUsername(String output) {
 
     }
 }

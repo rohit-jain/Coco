@@ -6,4 +6,5 @@ package com.example.rohitjain.coco;
 public interface HandleResponse {
     void downloadComplete(String output);
     void removeFromTtsList(Boundary b);
+    void setUsername(String output);
 }

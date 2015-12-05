@@ -2,6 +2,7 @@ package com.example.rohitjain.coco;
 
 import android.app.ActivityOptions;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.speech.tts.TextToSpeech;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -16,11 +17,22 @@ import android.widget.TextView;
 
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ImageActivity extends AppCompatActivity implements View.OnClickListener, HandleResponse{
+
+    final String SHARED_PREFERENCE_FILE = "COCO_PREFERENCES";
+    final String USERNAME = "username"; // key for shared pref file
+
+    String imageId;
+    int captionsUsed, doubleTapUsed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,12 +45,34 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
         yesButton.setOnClickListener(this);
         noButton.setOnClickListener(this);
 
-        initDownloadImageJson(getIntent().getExtras().getString("imageId"));
+        Bundle b = getIntent().getExtras();
+        imageId = b.getString("imageId");
+        captionsUsed = b.getInt("captionsUsed");
+        doubleTapUsed = b.getInt("doubleTapUsed");
+
+
+        initDownloadImageJson(b.getString("captionImageId"));
     }
 
     @Override
     public void onClick(View v) {
+        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+        SharedPreferences settings = getSharedPreferences(SHARED_PREFERENCE_FILE, MODE_PRIVATE);
+        final String DEFAULT_USERNAME = "daffi";
+        final String URL = "http://"+ getString(R.string.CURRENT_IP) +"/experiment/recordoutcome";
+        nameValuePairs.add(new BasicNameValuePair("username", settings.getString(USERNAME, DEFAULT_USERNAME)));
+        nameValuePairs.add(new BasicNameValuePair("image_id", imageId));
+        nameValuePairs.add(new BasicNameValuePair("double_used", Integer.toString(doubleTapUsed)));
+        nameValuePairs.add(new BasicNameValuePair("captions_used", Integer.toString(captionsUsed)));
 
+        if(v.getId() == R.id.yes){
+            nameValuePairs.add(new BasicNameValuePair("outcome", Boolean.toString(true)));
+        }
+        else if(v.getId() == R.id.no){
+            nameValuePairs.add(new BasicNameValuePair("outcome", Boolean.toString(false)));
+        }
+
+        new sendPost(nameValuePairs).execute(URL);
         finish();
         Intent i = new Intent(getApplicationContext(), MainActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -49,7 +83,7 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
 
     public void initDownloadImageJson(String imageId){
         String CHOSEN_IMAGE_URL = "http://"+ getString(R.string.CURRENT_IP) +"/experiment/surveyc/"+imageId;
-        new DownloadImageJson(this).execute(CHOSEN_IMAGE_URL);
+        new DownloadImageJson(this, DownloadImageJson.TaskType.DOWNLOAD_IMAGE).execute(CHOSEN_IMAGE_URL);
     }
 
     @Override
@@ -79,6 +113,11 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void removeFromTtsList(Boundary b) {
+
+    }
+
+    @Override
+    public void setUsername(String output) {
 
     }
 }

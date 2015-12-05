@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
+import android.support.annotation.IntegerRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +14,7 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -29,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 
 public class MainActivity extends AppCompatActivity implements GestureDetector.OnGestureListener,
@@ -42,15 +45,29 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     HashMap<String, String> ttsMap;
     List<Boundary> ttsList;
     List<Boundary> boundaryList;
+    int captionsUsed = 0, doubleTapUsed = 0;
+
     Boolean firstTime = Boolean.FALSE;
+    public static final String SHARED_PREFERENCE_FILE = "COCO_PREFERENCES";
+
+    public static final String SHOWN_OVERLAY = "Shown Overlay"; // key for shared pref file
+    public static final String USERNAME = "username"; // key for shared pref file
+    public static final String SPEECH_RATE = "speech_rate";
 
     @Override
     public void onInit(int status) {
-        Float speechRate = new Float(2.0);
         if(status != TextToSpeech.ERROR) {
             tts.setLanguage(Locale.US);
-            tts.setSpeechRate(speechRate);
+            tts.setSpeechRate(getSpeechRate());
         }
+    }
+
+    public Float getSpeechRate(){
+        final Float DEFAULT_SPEECH_RATE = new Float(3.0);
+        SharedPreferences settings = getSharedPreferences(SHARED_PREFERENCE_FILE, MODE_PRIVATE);
+        Log.v(TTS_TAG, "speech rate "+settings.getFloat(SPEECH_RATE, DEFAULT_SPEECH_RATE));
+
+        return settings.getFloat(SPEECH_RATE, DEFAULT_SPEECH_RATE);
     }
 
     @Override
@@ -70,8 +87,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         initDownloadImageJson();
 
         // initialize shared preferences settings
-        final String SHARED_PREFERENCE_FILE = "COCO_PREFERENCES";
-        final String SHOWN_OVERLAY = "Shown Overlay";
+        final String DEFAULT_USERNAME = "daffi";
         SharedPreferences settings = getSharedPreferences(SHARED_PREFERENCE_FILE, MODE_PRIVATE);
 
         // Instantiate the gesture detector with the application context and an implementation of
@@ -91,46 +107,18 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         nextImageButton.setOnClickListener(this);
         showCaptionButton.setOnClickListener(this);
 
+        // check if the user got a username from server
+        if(settings.getString(USERNAME, DEFAULT_USERNAME) == DEFAULT_USERNAME){
+            String getUsernameUrl = "http://"+ getString(R.string.CURRENT_IP) +"/experiment/getnextuser";
+            new DownloadImageJson(this, DownloadImageJson.TaskType.GET_USERNAME).execute(getUsernameUrl);
+        }
 
         // show overlays if the application has been started for the first time
         if (settings.getBoolean(SHOWN_OVERLAY, true)) {
             // if the app is being launched for first time, do the overlay
             Log.v("Main Activity", "First time, preparing overlay");
             firstTime = Boolean.TRUE;
-
-            final View overlayImage = findViewById(R.id.overlayOnBoarding);
-            final View overlayDoubleTap = findViewById(R.id.overlayOnBoarding2);
-            final View overlayShowCaptions = findViewById(R.id.overlayOnBoarding3);
-
-            overlayImage.setVisibility(View.VISIBLE);
-
-            Button overlayImageButtton = (Button) findViewById(R.id.buttonOverlay1);
-            Button overlayDoubleTapButton = (Button) findViewById(R.id.buttonOverlay2);
-            Button overlayShowCaptionsButton = (Button) findViewById(R.id.buttonOverlay3);
-
-            overlayImageButtton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    overlayImage.setVisibility(View.GONE);
-                    overlayDoubleTap.setVisibility(View.VISIBLE);
-                }
-            });
-
-            overlayDoubleTapButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    overlayDoubleTap.setVisibility(View.GONE);
-                    overlayShowCaptions.setVisibility(View.VISIBLE);
-                }
-            });
-
-            overlayShowCaptionsButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    overlayShowCaptions.setVisibility(View.GONE);
-                }
-            });
-
+            showTutorial();
 
             // record the fact that the app has been started at least once and overlay shown
             settings.edit().putBoolean(SHOWN_OVERLAY, false).commit();
@@ -138,9 +126,47 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
     }
 
+    private void showTutorial(){
+        final View overlayImage = findViewById(R.id.overlayOnBoarding);
+        final View overlayDoubleTap = findViewById(R.id.overlayOnBoarding2);
+        final View overlayShowCaptions = findViewById(R.id.overlayOnBoarding3);
+
+        overlayImage.setVisibility(View.VISIBLE);
+
+        Button overlayImageButtton = (Button) findViewById(R.id.buttonOverlay1);
+        Button overlayDoubleTapButton = (Button) findViewById(R.id.buttonOverlay2);
+        Button overlayShowCaptionsButton = (Button) findViewById(R.id.buttonOverlay3);
+
+        overlayImageButtton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                overlayImage.setVisibility(View.GONE);
+                overlayDoubleTap.setVisibility(View.VISIBLE);
+            }
+        });
+
+        overlayDoubleTapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                overlayDoubleTap.setVisibility(View.GONE);
+                overlayShowCaptions.setVisibility(View.VISIBLE);
+            }
+        });
+
+        overlayShowCaptionsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                overlayShowCaptions.setVisibility(View.GONE);
+            }
+        });
+    }
+
     @Override
     protected void onStart() {
         super.onStart();  // Always call the superclass method first
+        if(tts != null) {
+            tts.setSpeechRate(getSpeechRate());
+        }
         Log.v(ACTIVITY_TAG, "Starting Main Activity");
 
     }
@@ -154,6 +180,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             tts = new TextToSpeech(this, this);
         }
 
+        tts.setSpeechRate(getSpeechRate());
+
         // Download json for the image to be shown
         initDownloadImageJson();
 
@@ -163,17 +191,18 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     /*
     Download json for a random image from the server
      */
-    public void initDownloadImageJson(){
+    void initDownloadImageJson(){
         String RANDOM_IMAGE_URL = "http://"+ getString(R.string.CURRENT_IP) +"/experiment/random";
         Log.v(DOWNLOAD_TAG, "start download image json");
         // Async task to download image json data from the url
         // initialised with the activity as callback
-        new DownloadImageJson(this).execute(RANDOM_IMAGE_URL);
+        new DownloadImageJson(this, DownloadImageJson.TaskType.DOWNLOAD_IMAGE).execute(RANDOM_IMAGE_URL);
     }
 
     @Override
     /*
      Captures click event on the activity
+     Handles cases for button clicks here
      */
     public void onClick(View v) {
         // click came from 'show captions' button
@@ -182,10 +211,11 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             Intent intent = new Intent(MainActivity.this, CaptionActivity.class);
             Bundle b = new Bundle();
             b.putString("imageId", imageId); //Your id
+            b.putInt("captionsUsed", objectsTouched());
+            b.putInt("doubleTapUsed", doubleTapUsed);
             // pass the image id to captions class
             intent.putExtras(b);
             startActivity(intent);
-
         }
         // click to get a different image
         else if(v.getId() == R.id.next_image_button){
@@ -207,6 +237,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
         String textObjectsLeft = "";
         HashMap<String, Integer> freq = new HashMap<String, Integer>();
+        doubleTapUsed++;
 
         // Count frequency of each type of object that is not touched
         for(Boundary b:boundaryList){
@@ -260,36 +291,88 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         iv.setOnTouchListener(new ImageView.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                int action = event.getActionMasked();
+                if (action == MotionEvent.ACTION_DOWN && action!=MotionEvent.ACTION_CANCEL){
 
-                // TODO: Mark only one object touched at a time?, right now overlapping objects get marked as touch
+                    // TODO: Mark only one object touched at a time?, right now overlapping objects get marked as touch
 
-                for (Boundary b : boundaryList) {
-                    if (b.isInside(((double) event.getX()), (double) event.getY())) {
+                    List<Boundary> objectsTouched = new ArrayList<Boundary>();
+                    Boundary objectTouched = null;
+                    Log.v("Touch","touched "+(double) event.getX() +"," + (double) event.getY());
+
+                    for (Boundary b : boundaryList) {
+                        if (b.isInside(((double) event.getX()), (double) event.getY())) {
+                            objectsTouched.add(b);
+                        }
+                    }
+
+                    if(objectsTouched.size()>=1){
+                        int index = new Random().nextInt(objectsTouched.size());
+                        objectTouched = objectsTouched.get(index);
                         try {
-                            String categoryLabel = b.getLabel();
-                            String categoryId = Integer.toString(boundaryList.indexOf(b));
+                            String categoryLabel = objectTouched.getLabel();
+                            String categoryId = Integer.toString(boundaryList.indexOf(objectTouched));
 
                             // display category of object that was touched
                             tv.setText("Category : " + categoryLabel);
 
-                            if (!ttsList.contains(b)) {
+                            if (!ttsList.contains(objectTouched)) {
                                 // add to tts queue with the category id as utterance id for this request
                                 ttsMap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, categoryId);
                                 tts.speak(categoryLabel, TextToSpeech.QUEUE_ADD, ttsMap);
 
                                 // add it to the list of objects in speech queue
-                                ttsList.add(b);
+                                ttsList.add(objectTouched);
                             }
                         } catch (Exception e) {
                             Log.e(TTS_TAG, "error while adding objects to tts");
                             e.printStackTrace();
                         }
+
                     }
+
                 }
+
                 return true;
             }
         });
 
+    }
+
+    /*
+    Handle clicks for menu items selected
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.tutorial:
+                showTutorial();
+                return true;
+            case R.id.settings:
+                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    /*
+     Returns the number of objects that have been touched
+     */
+    private int objectsTouched(){
+
+        int objectsTouched = 0;
+
+        // Count frequency of each type of object that is not touched
+        for(Boundary b:boundaryList){
+            if(b.isTouched() == true){
+                objectsTouched++;
+            }
+        }
+
+        return objectsTouched;
     }
 
     /*
@@ -342,7 +425,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             new DownloadImageTask((ImageView) findViewById(R.id.imageView), (ImageView) findViewById(R.id.imageBlankView), progressView, false).execute(IMAGE_URL_STRING);
         }
         else{
-            new DownloadImageTask((ImageView) findViewById(R.id.imageView), null, progressView, false).execute(IMAGE_URL_STRING);
+            new DownloadImageTask((ImageView) findViewById(R.id.imageView), null, progressView, true).execute(IMAGE_URL_STRING);
         }
     }
 
@@ -352,6 +435,17 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
      */
     public void removeFromTtsList(Boundary b){
         ttsList.remove(b);
+    }
+
+    /*
+    Set username in shared preference file
+     */
+    @Override
+    public void setUsername(String output) {
+        SharedPreferences settings = getSharedPreferences(SHARED_PREFERENCE_FILE, MODE_PRIVATE);
+
+        settings.edit().putString(USERNAME,output).commit();
+
     }
 
     @Override

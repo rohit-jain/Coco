@@ -1,5 +1,6 @@
 package com.example.rohitjain.coco;
 
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -13,11 +14,19 @@ import java.net.URL;
  */
 public class DownloadImageJson extends AsyncTask<String, Void, String> {
 
+
+    public enum TaskType{
+        DOWNLOAD_IMAGE, GET_USERNAME;
+    }
+
     // callback
     HandleResponse delegate=null;
+    TaskType requestType = null;
 
-    public DownloadImageJson(HandleResponse delegate){
+
+    public DownloadImageJson(HandleResponse delegate, TaskType requestType){
         this.delegate = delegate;
+        this.requestType = requestType;
     }
 
     private String readStream(InputStream is) {
@@ -60,7 +69,12 @@ public class DownloadImageJson extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPostExecute(String output) {
-        this.delegate.downloadComplete(output);
+        if(this.requestType==TaskType.DOWNLOAD_IMAGE) {
+            this.delegate.downloadComplete(output);
+        }
+        else if(this.requestType==TaskType.GET_USERNAME){
+            this.delegate.setUsername(output);
+        }
     }
 }
 
