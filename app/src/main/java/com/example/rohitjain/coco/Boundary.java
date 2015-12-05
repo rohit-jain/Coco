@@ -36,11 +36,13 @@ public class Boundary {
         return this.label;
     }
 
-    Boolean isTouched(){
+    Boolean getTouched(){
         return this.touched;
     }
 
-
+    void setTouched(){
+        this.touched = true;
+    }
 
     Boundary(){
 

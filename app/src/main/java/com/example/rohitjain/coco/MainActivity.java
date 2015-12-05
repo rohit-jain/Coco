@@ -241,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
         // Count frequency of each type of object that is not touched
         for(Boundary b:boundaryList){
-            if(b.isTouched() == false){
+            if(b.getTouched() == false){
                 String word = b.getLabel();
                 int count = freq.containsKey(word) ? freq.get(word) : 0;
                 freq.put(word, count + 1);
@@ -292,9 +292,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 int action = event.getActionMasked();
-                if (action == MotionEvent.ACTION_DOWN && action!=MotionEvent.ACTION_CANCEL){
-
-                    // TODO: Mark only one object touched at a time?, right now overlapping objects get marked as touch
+                if ((action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_MOVE) && action!=MotionEvent.ACTION_CANCEL){
 
                     List<Boundary> objectsTouched = new ArrayList<Boundary>();
                     Boundary objectTouched = null;
@@ -312,6 +310,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                         try {
                             String categoryLabel = objectTouched.getLabel();
                             String categoryId = Integer.toString(boundaryList.indexOf(objectTouched));
+
+                            objectTouched.setTouched();
 
                             // display category of object that was touched
                             tv.setText("Category : " + categoryLabel);
@@ -367,7 +367,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
         // Count frequency of each type of object that is not touched
         for(Boundary b:boundaryList){
-            if(b.isTouched() == true){
+            if(b.getTouched() == true){
                 objectsTouched++;
             }
         }

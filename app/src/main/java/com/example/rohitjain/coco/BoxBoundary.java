@@ -43,7 +43,6 @@ public class BoxBoundary extends Boundary {
 
     Boolean isInside(Double touchX, Double touchY){
         if( touchX > x && touchX<(x + width)  && touchY > y && touchY<(y + height) ){
-            this.touched = true;
             return true;
         }
         return false;

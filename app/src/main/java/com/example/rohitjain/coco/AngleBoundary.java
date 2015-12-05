@@ -62,9 +62,6 @@ public class AngleBoundary extends Boundary {
                 }
             }
         }
-        if(result && (!this.touched)){
-            this.touched = true;
-        }
         return result;
     }
 
