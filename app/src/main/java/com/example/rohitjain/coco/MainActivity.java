@@ -43,11 +43,15 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     TextToSpeech tts;
     TextView tv;
     HashMap<String, String> ttsMap;
+    String lastCategoryTTS;
     List<Boundary> ttsList;
     List<Boundary> boundaryList;
+    Boundary lastObjectTouched = null;
     int captionsUsed = 0, doubleTapUsed = 0;
 
     Boolean firstTime = Boolean.FALSE;
+    Boolean showingTutorial = Boolean.FALSE;
+
     public static final String SHARED_PREFERENCE_FILE = "COCO_PREFERENCES";
 
     public static final String SHOWN_OVERLAY = "Shown Overlay"; // key for shared pref file
@@ -118,6 +122,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             // if the app is being launched for first time, do the overlay
             Log.v("Main Activity", "First time, preparing overlay");
             firstTime = Boolean.TRUE;
+
             showTutorial();
 
             // record the fact that the app has been started at least once and overlay shown
@@ -127,6 +132,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     }
 
     private void showTutorial(){
+        showingTutorial = Boolean.TRUE;
+
         final View overlayImage = findViewById(R.id.overlayOnBoarding);
         final View overlayDoubleTap = findViewById(R.id.overlayOnBoarding2);
         final View overlayShowCaptions = findViewById(R.id.overlayOnBoarding3);
@@ -157,6 +164,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             @Override
             public void onClick(View v) {
                 overlayShowCaptions.setVisibility(View.GONE);
+                showingTutorial = Boolean.FALSE;
             }
         });
     }
@@ -208,14 +216,20 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         // click came from 'show captions' button
         if(v.getId() == R.id.captions_button){
 
-            Intent intent = new Intent(MainActivity.this, CaptionActivity.class);
-            Bundle b = new Bundle();
-            b.putString("imageId", imageId); //Your id
-            b.putInt("captionsUsed", objectsTouched());
-            b.putInt("doubleTapUsed", doubleTapUsed);
-            // pass the image id to captions class
-            intent.putExtras(b);
-            startActivity(intent);
+            if( showingTutorial == true ) {
+                Button overlayShowCaptionsButton = (Button) findViewById(R.id.buttonOverlay3);
+                overlayShowCaptionsButton.performClick();
+            }
+            else {
+                Intent intent = new Intent(MainActivity.this, CaptionActivity.class);
+                Bundle b = new Bundle();
+                b.putString("imageId", imageId); //Your id
+                b.putInt("captionsUsed", objectsTouched());
+                b.putInt("doubleTapUsed", doubleTapUsed);
+                // pass the image id to captions class
+                intent.putExtras(b);
+                startActivity(intent);
+            }
         }
         // click to get a different image
         else if(v.getId() == R.id.next_image_button){
@@ -234,6 +248,11 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
      */
     public boolean onDoubleTap(MotionEvent event) {
         Log.d(GESTURE_DEBUG_TAG, "onDoubleTap: " + event.toString());
+
+        if( showingTutorial == true) {
+            Button overlayDoubleTapButton = (Button) findViewById(R.id.buttonOverlay2);
+            overlayDoubleTapButton.performClick();
+        }
 
         String textObjectsLeft = "";
         HashMap<String, Integer> freq = new HashMap<String, Integer>();
@@ -284,6 +303,22 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         ttsList = new ArrayList<Boundary>();
         ttsMap = new HashMap<String, String>();
 
+        if( showingTutorial == true ){
+            final ImageView ibv = (ImageView) findViewById(R.id.imageBlankView);
+            ibv.setOnTouchListener(new ImageView.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    int action = event.getActionMasked();
+
+                    if ((action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_MOVE) && action != MotionEvent.ACTION_CANCEL) {
+
+                        Button overlayImageButtton = (Button) findViewById(R.id.buttonOverlay1);
+                        overlayImageButtton.performClick();
+                    }
+                    return true;
+                }
+            });
+        }
 
         final ImageView iv = (ImageView) findViewById(R.id.imageView);
 
@@ -292,11 +327,12 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 int action = event.getActionMasked();
+
                 if ((action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_MOVE) && action!=MotionEvent.ACTION_CANCEL){
+
 
                     List<Boundary> objectsTouched = new ArrayList<Boundary>();
                     Boundary objectTouched = null;
-                    Log.v("Touch","touched "+(double) event.getX() +"," + (double) event.getY());
 
                     for (Boundary b : boundaryList) {
                         if (b.isInside(((double) event.getX()), (double) event.getY())) {
@@ -305,11 +341,23 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                     }
 
                     if(objectsTouched.size()>=1){
+
                         int index = new Random().nextInt(objectsTouched.size());
                         objectTouched = objectsTouched.get(index);
+                        String categoryLabel = objectTouched.getLabel();
+                        String categoryId = Integer.toString(boundaryList.indexOf(objectTouched));
+
+                        String lastCategoryLabel = null;
+                        String lastCategoryId = null;
+
+//                        if(ttsList.size()>0) {
+//                            lastObjectTouched = ttsList.get(ttsList.size() - 1);
+                        if(lastObjectTouched!= null) {
+                            lastCategoryLabel = lastObjectTouched.getLabel();
+                            lastCategoryId = Integer.toString(boundaryList.indexOf(lastObjectTouched));
+                        }
+
                         try {
-                            String categoryLabel = objectTouched.getLabel();
-                            String categoryId = Integer.toString(boundaryList.indexOf(objectTouched));
 
                             objectTouched.setTouched();
 
@@ -319,9 +367,21 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                             if (!ttsList.contains(objectTouched)) {
                                 // add to tts queue with the category id as utterance id for this request
                                 ttsMap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, categoryId);
-                                tts.speak(categoryLabel, TextToSpeech.QUEUE_ADD, ttsMap);
+                                String categoryTTS = categoryLabel;
+                                if( categoryLabel.equals(lastCategoryLabel) && !categoryId.equals(lastCategoryId) ) {
+                                    if ( lastCategoryTTS.indexOf("next") == -1 )
+                                        categoryTTS  = "next " + categoryTTS;
+                                }
+                                else if( categoryLabel.equals(lastCategoryLabel) && categoryId.equals(lastCategoryId) ){
+                                    categoryTTS  = lastCategoryTTS;
+                                }
+                                Log.v(TTS_TAG, lastCategoryLabel + "," + categoryLabel +"," + lastCategoryId +"," + categoryId +","+categoryTTS);
 
+                                tts.speak(categoryTTS, TextToSpeech.QUEUE_ADD, ttsMap);
                                 // add it to the list of objects in speech queue
+                                lastCategoryTTS = categoryTTS;
+                                lastObjectTouched = objectTouched;
+
                                 ttsList.add(objectTouched);
                             }
                         } catch (Exception e) {
@@ -421,7 +481,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
         // Fire asynctask to download image and set the grey box according to image dimension
         // For first time, set grey box on the overlay as well
-        if(firstTime == true) {
+        if((firstTime == true) || (showingTutorial == true)) {
             new DownloadImageTask((ImageView) findViewById(R.id.imageView), (ImageView) findViewById(R.id.imageBlankView), progressView, false).execute(IMAGE_URL_STRING);
         }
         else{

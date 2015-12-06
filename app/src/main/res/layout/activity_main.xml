@@ -75,9 +75,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#900000FF"
-            android:clickable="true"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
             android:translationZ="30dp"
             android:visibility="gone">
 
@@ -133,9 +130,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#800000FF"
-            android:clickable="true"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
             android:translationZ="30dp"
             android:visibility="gone">
 
@@ -179,9 +173,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#800000FF"
-            android:clickable="true"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
             android:translationZ="30dp"
             android:visibility="gone">
 
