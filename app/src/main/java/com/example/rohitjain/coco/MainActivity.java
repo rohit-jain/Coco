@@ -10,6 +10,7 @@ import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.style.LeadingMarginSpan;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
@@ -133,6 +134,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
     private void showTutorial(){
         showingTutorial = Boolean.TRUE;
+        if(firstTime!=true)
+            initDownloadImageJson();
 
         final View overlayImage = findViewById(R.id.overlayOnBoarding);
         final View overlayDoubleTap = findViewById(R.id.overlayOnBoarding2);
@@ -303,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         ttsList = new ArrayList<Boundary>();
         ttsMap = new HashMap<String, String>();
 
-        if( showingTutorial == true ){
+        if((firstTime == true) || (showingTutorial == true)){
             final ImageView ibv = (ImageView) findViewById(R.id.imageBlankView);
             ibv.setOnTouchListener(new ImageView.OnTouchListener() {
                 @Override
@@ -410,9 +413,12 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                 showTutorial();
                 return true;
             case R.id.settings:
-                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
-                startActivity(intent);
+                Intent intentSettings = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(intentSettings);
                 return true;
+            case R.id.leaderboard:
+                Intent intentLeaderboard = new Intent(MainActivity.this, LeaderboardActivity.class);
+                startActivity(intentLeaderboard);
             default:
                 return super.onOptionsItemSelected(item);
         }
