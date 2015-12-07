@@ -18,17 +18,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CaptionActivity"
-            android:parentActivityName=".MainActivity">
+        <activity android:name=".CaptionActivity">
         </activity>
-        <activity android:name=".ImageActivity"
-            android:parentActivityName=".CaptionActivity">
+        <activity android:name=".ImageActivity">
         </activity>
-        <activity android:name=".SettingsActivity"
-            android:parentActivityName=".MainActivity">
+        <activity android:name=".SettingsActivity">
         </activity>
-        <activity android:name=".LeaderboardActivity"
-            android:parentActivityName=".MainActivity">
+        <activity android:name=".LeaderboardActivity">
 
         </activity>
 
