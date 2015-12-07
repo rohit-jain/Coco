@@ -1,29 +1,20 @@
 package com.example.rohitjain.coco;
 
-import android.app.ActivityOptions;
 import android.content.Intent;
-import android.media.Image;
-import android.speech.tts.TextToSpeech;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.transition.Explode;
-import android.transition.Fade;
+import android.text.TextUtils;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -32,10 +23,10 @@ public class CaptionActivity extends AppCompatActivity implements View.OnClickLi
     String imageId;
     int captionsUsed, doubleTapUsed;
     CircularProgressView progressView;
-    HashMap<Integer, String> captionMapping = new HashMap<Integer, String>();
+    HashMap<Integer, List<String>> captionMapping = new HashMap<Integer, List<String>>();
 
     @Override
-    public void downloadComplete(String output) {
+    public void downloadComplete(String output, DownloadImageJson.TaskType task) {
         ArrayList<TextView> tvs = new ArrayList<TextView>();
 
         tvs.add((TextView)findViewById(R.id.c1));
@@ -45,13 +36,18 @@ public class CaptionActivity extends AppCompatActivity implements View.OnClickLi
         Log.v("processingJson", output);
 
         try {
-            JSONArray jsonCaptions = new JSONArray(output);
-            for(int i=0; i< jsonCaptions.length(); i++){
-                String captionImageId = jsonCaptions.getJSONObject(i).getString("image_id");
-                String captionText = jsonCaptions.getJSONObject(i).getString("caption");
+            JSONArray jsonCaptionTuples = new JSONArray(output);
+            for(int i=0; i< jsonCaptionTuples.length(); i++){
+                JSONArray jsonCaptions = new JSONArray(jsonCaptionTuples.get(i).toString());
+
+                JSONObject jsonCaption = jsonCaptions.getJSONObject(0);
+                String captionImageId = jsonCaption.getString("image_id");
+                String captionText = jsonCaption.getString("caption");
+                String captionType = jsonCaptions.get(1).toString();
+
                 TextView tv = tvs.get(i);
                 tv.setText(captionText);
-                captionMapping.put(tv.getId(), captionImageId);
+                captionMapping.put(tv.getId(), Arrays.asList(captionImageId, captionType));
                 tv.setOnClickListener(this);
             }
 
@@ -89,7 +85,8 @@ public class CaptionActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View v) {
         Intent intent = new Intent(CaptionActivity.this, ImageActivity.class);
         Bundle b = new Bundle();
-        b.putString("captionImageId", captionMapping.get(v.getId()));
+        b.putString("captionImageId", captionMapping.get(v.getId()).get(0));
+        b.putString("captionType", captionMapping.get(v.getId()).get(1));
         b.putString("imageId", imageId); //Your id
         b.putInt("captionsUsed", captionsUsed);
         b.putInt("doubleTapUsed", doubleTapUsed);

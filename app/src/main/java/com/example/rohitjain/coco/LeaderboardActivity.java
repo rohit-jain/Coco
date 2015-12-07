@@ -1,71 +1,87 @@
 package com.example.rohitjain.coco;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
  * Created by rohitjain on 05/12/15.
  */
 public class LeaderboardActivity extends AppCompatActivity implements HandleResponse {
-    public static List<String> scores = new ArrayList<String>();
-    public static List<String> usernames = new ArrayList<String>();
+    public List<String> scores = new ArrayList<String>();
+    public List<String> usernames = new ArrayList<String>();
+    String currentUsername;
     GridView gv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leaderboard);
+        setTitle("Leaderboard");
+//        getSupportActionBar().setHomeButtonEnabled(true);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        currentUsername = getIntent().getExtras().getString(MainActivity.USERNAME);
+
+        String getScoreURL = String.format(getString(R.string.get_score_url),getString(R.string.CURRENT_IP)) + currentUsername;
+        Log.d("Leaderboard", getScoreURL);
+        new DownloadImageJson(this, DownloadImageJson.TaskType.GET_USER_SCORE).execute(getScoreURL);
 
         final String leaderboardURL = "http://"+ getString(R.string.CURRENT_IP) +"/experiment/leaderboard";
         new DownloadImageJson( this, DownloadImageJson.TaskType.GET_LEADERBOARD).execute(leaderboardURL);
+
+        TextView currentUserText = (TextView) findViewById(R.id.currentUsername);
+        currentUserText.setText(currentUsername);
+
         gv = (GridView) findViewById(R.id.contextgrid);
 
     }
 
     @Override
-    public void downloadComplete(String output) {
-        String jsonString;
+    public void downloadComplete(String output, DownloadImageJson.TaskType task) {
 
-        jsonString = output;
-        Log.v("Leaderboard", jsonString);
+        if( task == DownloadImageJson.TaskType.GET_LEADERBOARD ) {
+            Log.v("Leaderboard", output);
 
-        try {
-            JSONArray objects = new JSONArray(jsonString);
-            for (int i = 0; i < objects.length(); i++)
-            {
-                JSONObject curr = new JSONObject(objects.get(i).toString());
-                usernames.add(curr.getString("username"));
-                scores.add(curr.getString("score"));
+            try {
+
+                JSONArray objects = new JSONArray(output);
+                for (int i = 0; i < objects.length(); i++) {
+                    JSONObject curr = new JSONObject(objects.get(i).toString());
+                    usernames.add(curr.getString("username"));
+                    scores.add(curr.getString("score"));
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
 
-        } catch (JSONException e) {
-            e.printStackTrace();
+            gv.setAdapter(new CustomLeaderboardAdapter(this, scores, usernames, currentUsername));
         }
+        else if(task == DownloadImageJson.TaskType.GET_USER_SCORE) {
+            Log.v("Leaderboard",output);
 
-        gv.setAdapter(new CustomLeaderboardAdapter(this, scores, usernames));
+            try {
+                JSONObject scoreJson = new JSONObject(output);
+                String currentUserScore = scoreJson.getString("score");
+                TextView currentUserScoreText = (TextView) findViewById(R.id.currentUserScore);
+                currentUserScoreText.setText(currentUserScore);
 
+            } catch (JSONException e) {
+                e.printStackTrace();
 
-
+            }
+        }
     }
 
     @Override

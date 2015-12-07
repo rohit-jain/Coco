@@ -16,7 +16,7 @@ public class DownloadImageJson extends AsyncTask<String, Void, String> {
 
 
     public enum TaskType{
-        DOWNLOAD_IMAGE, GET_USERNAME, GET_LEADERBOARD;
+        DOWNLOAD_IMAGE, GET_USERNAME, GET_LEADERBOARD, GET_USER_SCORE;
     }
 
     // callback
@@ -70,13 +70,16 @@ public class DownloadImageJson extends AsyncTask<String, Void, String> {
     @Override
     protected void onPostExecute(String output) {
         if(this.requestType==TaskType.DOWNLOAD_IMAGE) {
-            this.delegate.downloadComplete(output);
+            this.delegate.downloadComplete(output, this.requestType);
         }
         else if(this.requestType==TaskType.GET_USERNAME){
             this.delegate.setUsername("user"+output);
         }
         else if(this.requestType==TaskType.GET_LEADERBOARD) {
-            this.delegate.downloadComplete(output);
+            this.delegate.downloadComplete(output,this.requestType);
+        }
+        else if(this.requestType==TaskType.GET_USER_SCORE) {
+            this.delegate.downloadComplete(output,this.requestType);
         }
     }
 }

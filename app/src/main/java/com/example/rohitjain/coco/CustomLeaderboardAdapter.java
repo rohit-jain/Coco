@@ -2,6 +2,8 @@ package com.example.rohitjain.coco;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,11 +24,13 @@ public class CustomLeaderboardAdapter extends BaseAdapter {
     private static LayoutInflater inflater=null;
     public static List<String> scoreValues = new ArrayList<String>();
     public static List<String>  usernameValues = new ArrayList<String>();
+    public static String currentUserValue;
 
-    public CustomLeaderboardAdapter(Activity leaderboardActivity, List<String> listScoreValues, List<String> listUsernameValues) {
+    public CustomLeaderboardAdapter(Activity leaderboardActivity, List<String> listScoreValues, List<String> listUsernameValues, String currentUser) {
         context = leaderboardActivity;
         usernameValues = listUsernameValues;
         scoreValues = listScoreValues;
+        currentUserValue = currentUser;
         inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -63,11 +67,14 @@ public class CustomLeaderboardAdapter extends BaseAdapter {
         holder.rank = (TextView) rowView.findViewById(R.id.rank);
 
         holder.img = (ImageView) rowView.findViewById(R.id.icon);
-        Log.v("Leaderboard", this.usernameValues.get(position));
         holder.username.setText(this.usernameValues.get(position));
         holder.score.setText(this.scoreValues.get(position));
         int userRank = position+1;
         holder.rank.setText(userRank + "");
+        if(this.usernameValues.get(position).equals(currentUserValue)){
+            CardView card = (CardView) rowView.findViewById(R.id.event_card);
+            card.setCardBackgroundColor(Color.parseColor("#C9CFF5"));
+        }
         return rowView;
     }
 

@@ -32,6 +32,7 @@ public class SettingsActivity extends AppCompatActivity implements UsernameDialo
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_settings);
+        setTitle("Settings");
 
         findViewById(R.id.usernameLayout).setOnClickListener(new View.OnClickListener() {
             @Override

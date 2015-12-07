@@ -31,7 +31,7 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
     final String SHARED_PREFERENCE_FILE = "COCO_PREFERENCES";
     final String USERNAME = "username"; // key for shared pref file
 
-    String imageId;
+    String imageId, captionType, captionImageId;
     int captionsUsed, doubleTapUsed;
 
     @Override
@@ -49,7 +49,8 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
         imageId = b.getString("imageId");
         captionsUsed = b.getInt("captionsUsed");
         doubleTapUsed = b.getInt("doubleTapUsed");
-
+        captionType = b.getString("captionType");
+        captionImageId = b.getString("captionImageId");
 
         initDownloadImageJson(b.getString("captionImageId"));
     }
@@ -64,17 +65,21 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
         nameValuePairs.add(new BasicNameValuePair("image_id", imageId));
         nameValuePairs.add(new BasicNameValuePair("double_used", Integer.toString(doubleTapUsed)));
         nameValuePairs.add(new BasicNameValuePair("captions_used", Integer.toString(captionsUsed)));
+        nameValuePairs.add(new BasicNameValuePair("caption_type", captionType));
+        nameValuePairs.add(new BasicNameValuePair("caption_image_id", captionImageId));
+
 
         if(v.getId() == R.id.yes){
-            nameValuePairs.add(new BasicNameValuePair("outcome", Boolean.toString(true)));
+            nameValuePairs.add(new BasicNameValuePair("image_response", Boolean.toString(true)));
         }
         else if(v.getId() == R.id.no){
-            nameValuePairs.add(new BasicNameValuePair("outcome", Boolean.toString(false)));
+            nameValuePairs.add(new BasicNameValuePair("image_response", Boolean.toString(false)));
         }
 
         new sendPost(nameValuePairs).execute(URL);
         finish();
         Intent i = new Intent(getApplicationContext(), MainActivity.class);
+        settings.edit().putBoolean(MainActivity.LOAD_NEW_IMAGE,true).commit();
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(i);
 
@@ -87,7 +92,7 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
     }
 
     @Override
-    public void downloadComplete(String output) {
+    public void downloadComplete(String output, DownloadImageJson.TaskType task) {
         String jsonString;
         String imageFileName = "";
 
@@ -108,6 +113,7 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
         // downloads and sets the image
         CircularProgressView progressView = (CircularProgressView) findViewById(R.id.progress_view);
         new DownloadImageTask((ImageView) findViewById(R.id.imageView2), progressView, true).execute(IMAGE_URL_STRING);
+
     }
 
 

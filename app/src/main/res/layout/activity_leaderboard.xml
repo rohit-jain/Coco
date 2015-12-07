@@ -1,13 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:weightSum="1.0">
 
-    <GridView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/contextgrid"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:numColumns="1"
-        android:stretchMode="columnWidth"
-        android:gravity="center"/>
+        android:layout_height="0dp"
+        android:layout_weight="0.85">
+
+        <GridView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/contextgrid"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:numColumns="1"
+            android:stretchMode="columnWidth"
+            android:gravity="center"/>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:paddingLeft="25dp"
+        android:paddingRight="15dp"
+        android:background="@color/colorAccent"
+        android:layout_weight="0.15">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold|italic"
+                android:layout_gravity="center_vertical"
+                android:textSize="40sp"
+                android:textColor="@android:color/white"
+                android:text="username"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:id="@+id/currentUsername"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true" />
+
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="N/A"
+            android:textColor="@android:color/white"
+            android:textSize="40sp"
+            android:textStyle="bold"
+            android:layout_gravity="right"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:id="@+id/currentUserScore"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true" />
+
+    </RelativeLayout>
 </LinearLayout>

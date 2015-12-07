@@ -59,6 +59,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     public static final String SHOWN_OVERLAY = "Shown Overlay"; // key for shared pref file
     public static final String USERNAME = "username"; // key for shared pref file
     public static final String SPEECH_RATE = "speech_rate";
+    public static final String LOAD_NEW_IMAGE = "load_new_image";
+    public static final Boolean DEFAULT_NEW_IMAGE = false;
 
     @Override
     public void onInit(int status) {
@@ -209,10 +211,13 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
         tts.setSpeechRate(getSpeechRate());
 
-        // Download json for the image to be shown
-        initDownloadImageJson();
+        SharedPreferences settings = getSharedPreferences(SHARED_PREFERENCE_FILE, MODE_PRIVATE);
+        if ( settings.getBoolean(LOAD_NEW_IMAGE, DEFAULT_NEW_IMAGE) ) {
+            // Download json for the image to be shown
+            initDownloadImageJson();
+            settings.edit().putBoolean(LOAD_NEW_IMAGE, DEFAULT_NEW_IMAGE).commit();
+        }
 
-        tv.setText("");
     }
 
     /*
@@ -222,6 +227,10 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         // remove the old image
         getWindow().getDecorView().findViewById(R.id.imageBlankView).invalidate();
         getWindow().getDecorView().findViewById(R.id.imageView).invalidate();
+
+        //make the text box empty
+        TextView textObjects = (TextView)(getWindow().getDecorView().findViewById(R.id.textObject));
+        textObjects.setText("");
 
         String RANDOM_IMAGE_URL = "http://"+ getString(R.string.CURRENT_IP) +"/experiment/random";
         Log.v(DOWNLOAD_TAG, "start download image json");
@@ -320,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     /*
     Callback method when download async task is complete
      */
-    public void downloadComplete(String jsonString) {
+    public void downloadComplete(String jsonString, DownloadImageJson.TaskType task) {
 
         Log.v(DOWNLOAD_TAG, "processing JSON string:" + jsonString);
 
@@ -443,7 +452,12 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                 return true;
             case R.id.leaderboard:
                 Intent intentLeaderboard = new Intent(MainActivity.this, LeaderboardActivity.class);
+                Bundle leaderboardBundle = new Bundle();
+                leaderboardBundle.putString(USERNAME,getUsername());
+                intentLeaderboard.putExtras(leaderboardBundle);
                 startActivity(intentLeaderboard);
+            case android.R.id.home:
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

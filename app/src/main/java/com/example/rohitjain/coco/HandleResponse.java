@@ -4,7 +4,7 @@ package com.example.rohitjain.coco;
  * Created by rohitjain on 12/10/15.
  */
 public interface HandleResponse {
-    void downloadComplete(String output);
+    void downloadComplete(String output, DownloadImageJson.TaskType task);
     void removeFromTtsList(Boundary b);
     void setUsername(String output);
 }
