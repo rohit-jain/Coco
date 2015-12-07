@@ -331,108 +331,117 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
      */
     public void downloadComplete(String jsonString, DownloadImageJson.TaskType task) {
 
-        Log.v(DOWNLOAD_TAG, "processing JSON string:" + jsonString);
+        if( task == DownloadImageJson.TaskType.DOWNLOAD_IMAGE ) {
 
-        setBoundaries(jsonString);
+            Log.v(DOWNLOAD_TAG, "processing JSON string:" + jsonString);
 
-        // instantiate text to speech object
-        tts.setOnUtteranceProgressListener(new TextSpeechHandler(boundaryList, this));
-        ttsList = new ArrayList<Boundary>();
-        ttsMap = new HashMap<String, String>();
+            setBoundaries(jsonString);
 
-        if((firstTime == true) || (showingTutorial == true)){
-            ImageView ibv = (ImageView) findViewById(R.id.imageBlankView);
-            ibv.setOnTouchListener(new ImageView.OnTouchListener() {
+            // instantiate text to speech object
+            tts.setOnUtteranceProgressListener(new TextSpeechHandler(boundaryList, this));
+            ttsList = new ArrayList<Boundary>();
+            ttsMap = new HashMap<String, String>();
+
+            if((firstTime == true) || (showingTutorial == true)){
+                ImageView ibv = (ImageView) findViewById(R.id.imageBlankView);
+                ibv.setOnTouchListener(new ImageView.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        int action = event.getActionMasked();
+
+                        if ((action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_MOVE) && action != MotionEvent.ACTION_CANCEL) {
+
+                            Button overlayImageButtton = (Button) findViewById(R.id.buttonOverlay1);
+                            overlayImageButtton.performClick();
+                        }
+                        return true;
+                    }
+                });
+            }
+
+            final ImageView iv = (ImageView) findViewById(R.id.imageView);
+
+            // Handle touch event on image
+            iv.setOnTouchListener(new ImageView.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                     int action = event.getActionMasked();
 
-                    if ((action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_MOVE) && action != MotionEvent.ACTION_CANCEL) {
-
-                        Button overlayImageButtton = (Button) findViewById(R.id.buttonOverlay1);
-                        overlayImageButtton.performClick();
-                    }
-                    return true;
-                }
-            });
-        }
-
-        final ImageView iv = (ImageView) findViewById(R.id.imageView);
-
-        // Handle touch event on image
-        iv.setOnTouchListener(new ImageView.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                int action = event.getActionMasked();
-
-                if ((action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_MOVE) && action!=MotionEvent.ACTION_CANCEL){
+                    if ((action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_MOVE) && action!=MotionEvent.ACTION_CANCEL){
 
 
-                    List<Boundary> objectsTouched = new ArrayList<Boundary>();
-                    Boundary objectTouched = null;
+                        List<Boundary> objectsTouched = new ArrayList<Boundary>();
+                        Boundary objectTouched = null;
 
-                    for (Boundary b : boundaryList) {
-                        if (b.isInside(((double) event.getX()), (double) event.getY())) {
-                            objectsTouched.add(b);
+                        for (Boundary b : boundaryList) {
+                            if (b.isInside(((double) event.getX()), (double) event.getY())) {
+                                objectsTouched.add(b);
+                            }
                         }
-                    }
 
-                    if(objectsTouched.size()>=1){
+                        if(objectsTouched.size()>=1){
 
-                        int index = new Random().nextInt(objectsTouched.size());
-                        objectTouched = objectsTouched.get(index);
-                        String categoryLabel = objectTouched.getLabel();
-                        String categoryId = Integer.toString(boundaryList.indexOf(objectTouched));
+                            int index = new Random().nextInt(objectsTouched.size());
+                            objectTouched = objectsTouched.get(index);
+                            String categoryLabel = objectTouched.getLabel();
+                            String categoryId = Integer.toString(boundaryList.indexOf(objectTouched));
 
-                        String lastCategoryLabel = null;
-                        String lastCategoryId = null;
+                            String lastCategoryLabel = null;
+                            String lastCategoryId = null;
 
 //                        if(ttsList.size()>0) {
 //                            lastObjectTouched = ttsList.get(ttsList.size() - 1);
-                        if(lastObjectTouched!= null) {
-                            lastCategoryLabel = lastObjectTouched.getLabel();
-                            lastCategoryId = Integer.toString(boundaryList.indexOf(lastObjectTouched));
-                        }
-
-                        try {
-
-                            objectTouched.setTouched();
-
-                            // display category of object that was touched
-                            tv.setText("Category : " + categoryLabel);
-
-                            if (!ttsList.contains(objectTouched)) {
-                                // add to tts queue with the category id as utterance id for this request
-                                ttsMap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, categoryId);
-                                String categoryTTS = categoryLabel;
-                                if( categoryLabel.equals(lastCategoryLabel) && !categoryId.equals(lastCategoryId) ) {
-                                    if ( lastCategoryTTS.indexOf("next") == -1 )
-                                        categoryTTS  = "next " + categoryTTS;
-                                }
-                                else if( categoryLabel.equals(lastCategoryLabel) && categoryId.equals(lastCategoryId) ){
-                                    categoryTTS  = lastCategoryTTS;
-                                }
-                                Log.v(TTS_TAG, lastCategoryLabel + "," + categoryLabel +"," + lastCategoryId +"," + categoryId +","+categoryTTS);
-
-                                tts.speak(categoryTTS, TextToSpeech.QUEUE_ADD, ttsMap);
-                                // add it to the list of objects in speech queue
-                                lastCategoryTTS = categoryTTS;
-                                lastObjectTouched = objectTouched;
-
-                                ttsList.add(objectTouched);
+                            if(lastObjectTouched!= null) {
+                                lastCategoryLabel = lastObjectTouched.getLabel();
+                                lastCategoryId = Integer.toString(boundaryList.indexOf(lastObjectTouched));
                             }
-                        } catch (Exception e) {
-                            Log.e(TTS_TAG, "error while adding objects to tts");
-                            e.printStackTrace();
+
+                            try {
+
+                                objectTouched.setTouched();
+
+                                // display category of object that was touched
+                                tv.setText("Category : " + categoryLabel);
+
+                                if (!ttsList.contains(objectTouched)) {
+                                    // add to tts queue with the category id as utterance id for this request
+                                    ttsMap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, categoryId);
+                                    String categoryTTS = categoryLabel;
+                                    if( categoryLabel.equals(lastCategoryLabel) && !categoryId.equals(lastCategoryId) ) {
+                                        if ( lastCategoryTTS.indexOf("next") == -1 )
+                                            categoryTTS  = "next " + categoryTTS;
+                                    }
+                                    else if( categoryLabel.equals(lastCategoryLabel) && categoryId.equals(lastCategoryId) ){
+                                        categoryTTS  = lastCategoryTTS;
+                                    }
+                                    Log.v(TTS_TAG, lastCategoryLabel + "," + categoryLabel +"," + lastCategoryId +"," + categoryId +","+categoryTTS);
+
+                                    tts.speak(categoryTTS, TextToSpeech.QUEUE_ADD, ttsMap);
+                                    // add it to the list of objects in speech queue
+                                    lastCategoryTTS = categoryTTS;
+                                    lastObjectTouched = objectTouched;
+
+                                    ttsList.add(objectTouched);
+                                }
+                            } catch (Exception e) {
+                                Log.e(TTS_TAG, "error while adding objects to tts");
+                                e.printStackTrace();
+                            }
+
                         }
 
                     }
 
+                    return true;
                 }
+            });
 
-                return true;
-            }
-        });
+        }
+        else if(task == DownloadImageJson.TaskType.GET_USER_SCORE) {
+            // do nothing
+            Log.v(ACTIVITY_TAG, jsonString);
+        }
+
 
     }
 
@@ -531,7 +540,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             new DownloadImageTask((ImageView) findViewById(R.id.imageView), (ImageView) findViewById(R.id.imageBlankView), progressView, false).execute(IMAGE_URL_STRING);
         }
         else{
-            new DownloadImageTask((ImageView) findViewById(R.id.imageView), null, progressView, true).execute(IMAGE_URL_STRING);
+            new DownloadImageTask((ImageView) findViewById(R.id.imageView), null, progressView, false).execute(IMAGE_URL_STRING);
         }
     }
 
@@ -591,6 +600,9 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         Dialog dialogView = dialog.getDialog();
         EditText editUsername = (EditText) dialogView.findViewById(R.id.username);
         setUsername(editUsername.getText().toString());
+        String getScoreURL = String.format(getString(R.string.get_score_url),getString(R.string.CURRENT_IP)) + editUsername.getText().toString();
+        Log.v(ACTIVITY_TAG, getScoreURL);
+        new DownloadImageJson(this, DownloadImageJson.TaskType.GET_USER_SCORE).execute(getScoreURL);
 
     }
 

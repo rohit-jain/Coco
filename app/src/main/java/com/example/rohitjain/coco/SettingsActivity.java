@@ -3,8 +3,6 @@ package com.example.rohitjain.coco;
 import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -12,14 +10,16 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 /**
  * Created by rohitjain on 05/12/15.
  */
 
-public class SettingsActivity extends AppCompatActivity implements UsernameDialog.NoticeDialogListener{
+public class SettingsActivity extends AppCompatActivity implements UsernameDialog.NoticeDialogListener, HandleResponse{
 
     private SeekBar seekBar;
     TextView tv;
@@ -80,9 +80,21 @@ public class SettingsActivity extends AppCompatActivity implements UsernameDialo
         return settings.getString(MainActivity.USERNAME, MainActivity.DEFAULT_USERNAME);
     }
 
+    @Override
+    public void downloadComplete(String output, DownloadImageJson.TaskType task) {
+        if(task == DownloadImageJson.TaskType.GET_USER_SCORE) {
+            // do nothing for now
+        }
+    }
+
+    @Override
+    public void removeFromTtsList(Boundary b) {
+
+    }
+
     /*
-    Set username in shared preference file
-     */
+        Set username in shared preference file
+         */
     public void setUsername(String output) {
         SharedPreferences settings = getSharedPreferences(MainActivity.SHARED_PREFERENCE_FILE, MODE_PRIVATE);
 
@@ -100,6 +112,8 @@ public class SettingsActivity extends AppCompatActivity implements UsernameDialo
         EditText editUsername = (EditText) dialogView.findViewById(R.id.username);
         tv.setText(editUsername.getText().toString());
         setUsername(editUsername.getText().toString());
+        String getScoreURL = String.format(getString(R.string.get_score_url),getString(R.string.CURRENT_IP)) + editUsername.getText().toString();
+        new DownloadImageJson(this, DownloadImageJson.TaskType.GET_USER_SCORE).execute(getScoreURL);
 
     }
 
