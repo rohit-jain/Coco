@@ -1,16 +1,15 @@
 package com.example.rohitjain.coco;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
-import android.support.annotation.IntegerRes;
-import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.text.style.LeadingMarginSpan;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
@@ -19,6 +18,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -36,7 +36,7 @@ import java.util.Random;
 
 
 public class MainActivity extends AppCompatActivity implements GestureDetector.OnGestureListener,
-        GestureDetector.OnDoubleTapListener, OnInitListener, View.OnClickListener, HandleResponse{
+        GestureDetector.OnDoubleTapListener, OnInitListener, View.OnClickListener, HandleResponse, UsernameDialog.NoticeDialogListener{
 
     private static final String GESTURE_DEBUG_TAG = "Main Activity Gestures", DOWNLOAD_TAG = "Download", TTS_TAG = "TTS", ACTIVITY_TAG = "MAIN ACTIVITY";
     private GestureDetectorCompat mDetector;
@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     Boolean showingTutorial = Boolean.FALSE;
 
     public static final String SHARED_PREFERENCE_FILE = "COCO_PREFERENCES";
+    public static final String DEFAULT_USERNAME = "daffi";
 
     public static final String SHOWN_OVERLAY = "Shown Overlay"; // key for shared pref file
     public static final String USERNAME = "username"; // key for shared pref file
@@ -92,7 +93,6 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         initDownloadImageJson();
 
         // initialize shared preferences settings
-        final String DEFAULT_USERNAME = "daffi";
         SharedPreferences settings = getSharedPreferences(SHARED_PREFERENCE_FILE, MODE_PRIVATE);
 
         // Instantiate the gesture detector with the application context and an implementation of
@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         showCaptionButton.setOnClickListener(this);
 
         // check if the user got a username from server
-        if(settings.getString(USERNAME, DEFAULT_USERNAME) == DEFAULT_USERNAME){
+        if( getUsername().equals(DEFAULT_USERNAME)){
             String getUsernameUrl = "http://"+ getString(R.string.CURRENT_IP) +"/experiment/getnextuser";
             new DownloadImageJson(this, DownloadImageJson.TaskType.GET_USERNAME).execute(getUsernameUrl);
         }
@@ -125,11 +125,15 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             firstTime = Boolean.TRUE;
 
             showTutorial();
-
             // record the fact that the app has been started at least once and overlay shown
             settings.edit().putBoolean(SHOWN_OVERLAY, false).commit();
         }
 
+    }
+
+    private String getUsername(){
+        SharedPreferences settings = getSharedPreferences(SHARED_PREFERENCE_FILE, MODE_PRIVATE);
+        return settings.getString(USERNAME, DEFAULT_USERNAME);
     }
 
     private void showTutorial(){
@@ -150,6 +154,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         overlayImageButtton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                getWindow().getDecorView().findViewById(R.id.imageBlankView).invalidate();
                 overlayImage.setVisibility(View.GONE);
                 overlayDoubleTap.setVisibility(View.VISIBLE);
             }
@@ -167,6 +172,17 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             @Override
             public void onClick(View v) {
                 overlayShowCaptions.setVisibility(View.GONE);
+                if(firstTime){
+                    firstTime = Boolean.FALSE;
+                    DialogFragment usernameDialogFragment = new UsernameDialog();
+                    // Supply username as an argument.
+                    Bundle args = new Bundle();
+                    args.putString(USERNAME, getUsername());
+                    usernameDialogFragment.setArguments(args);
+
+                    usernameDialogFragment.show(getSupportFragmentManager(), "username");
+
+                }
                 showingTutorial = Boolean.FALSE;
             }
         });
@@ -203,6 +219,10 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     Download json for a random image from the server
      */
     void initDownloadImageJson(){
+        // remove the old image
+        getWindow().getDecorView().findViewById(R.id.imageBlankView).invalidate();
+        getWindow().getDecorView().findViewById(R.id.imageView).invalidate();
+
         String RANDOM_IMAGE_URL = "http://"+ getString(R.string.CURRENT_IP) +"/experiment/random";
         Log.v(DOWNLOAD_TAG, "start download image json");
         // Async task to download image json data from the url
@@ -236,8 +256,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         }
         // click to get a different image
         else if(v.getId() == R.id.next_image_button){
-            // remove the old image
-            getWindow().getDecorView().findViewById(R.id.imageView).invalidate();
+
             // download new image json
             initDownloadImageJson();
         }
@@ -276,10 +295,16 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         else {
             List<String> objectsLeftList = new ArrayList<String>();
             for( String objectName: freq.keySet()){
-                String objectLeftString = freq.get(objectName) + " " + objectName;
+                String objectLeftString;
+                if(objectName.contains("Text")) {
+                    objectLeftString = objectName;
+                }
+                else {
+                    objectLeftString =freq.get(objectName) + " " + objectName;
+                }
                 objectsLeftList.add(objectLeftString);
             }
-            textObjectsLeft = TextUtils.join(",", objectsLeftList);
+            textObjectsLeft = TextUtils.join(", ", objectsLeftList);
         }
 
         // TODO: write different speak methods for old and new android version
@@ -307,7 +332,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         ttsMap = new HashMap<String, String>();
 
         if((firstTime == true) || (showingTutorial == true)){
-            final ImageView ibv = (ImageView) findViewById(R.id.imageBlankView);
+            ImageView ibv = (ImageView) findViewById(R.id.imageBlankView);
             ibv.setOnTouchListener(new ImageView.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
@@ -488,6 +513,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         // Fire asynctask to download image and set the grey box according to image dimension
         // For first time, set grey box on the overlay as well
         if((firstTime == true) || (showingTutorial == true)) {
+            Log.v(DOWNLOAD_TAG, "downlaoding both images");
             new DownloadImageTask((ImageView) findViewById(R.id.imageView), (ImageView) findViewById(R.id.imageBlankView), progressView, false).execute(IMAGE_URL_STRING);
         }
         else{
@@ -542,6 +568,23 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
     }
 
+    // The dialog fragment receives a reference to this Activity through the
+    // Fragment.onAttach() callback, which it uses to call the following methods
+    // defined by the NoticeDialogFragment.NoticeDialogListener interface
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        // User touched the dialog's positive button
+        Dialog dialogView = dialog.getDialog();
+        EditText editUsername = (EditText) dialogView.findViewById(R.id.username);
+        setUsername(editUsername.getText().toString());
+
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        // User touched the dialog's negative button
+    }
+
     @Override
     public boolean onDown(MotionEvent event) {
         return true;
@@ -582,5 +625,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 //        Log.d(DEBUG_TAG, "onSingleTapConfirmed: " + event.toString());
         return true;
     }
+
+
 
 }

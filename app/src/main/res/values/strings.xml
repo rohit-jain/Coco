@@ -1,4 +1,9 @@
 <resources>
-    <string name="app_name">Coco Reader</string>
+    <string name="app_name">palpiction</string>
     <string name="CURRENT_IP">52.23.233.225</string>
+    <string name="username_dialog">Select Username</string>
+    <string name="username_placeholder">username</string>
+
+    <string name="cancel">cancel</string>
+    <string name="save">save</string>
 </resources>

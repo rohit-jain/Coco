@@ -66,6 +66,9 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         this.progressView.setVisibility(View.INVISIBLE);
 
         if (this.showImage == true) {
+            this.bmImage.getLayoutParams().height = this.imageHeight;
+            this.bmImage.getLayoutParams().width = this.imageWidth;
+            this.bmImage.requestLayout();
             this.bmImage.setImageBitmap(resultImage);
         }
         else {

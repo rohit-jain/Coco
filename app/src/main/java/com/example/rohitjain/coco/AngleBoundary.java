@@ -26,7 +26,7 @@ public class AngleBoundary extends Boundary {
             this.width = bboxes.getDouble("w");
             this.height = bboxes.getDouble("h");
             this.theta = bboxes.getDouble("a");
-            this.label = "Text " + jsonBbox.getString("string");
+            this.label = "Text \"" + jsonBbox.getString("string") +"\"";
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -73,7 +73,7 @@ public class DownloadImageJson extends AsyncTask<String, Void, String> {
             this.delegate.downloadComplete(output);
         }
         else if(this.requestType==TaskType.GET_USERNAME){
-            this.delegate.setUsername(output);
+            this.delegate.setUsername("user"+output);
         }
         else if(this.requestType==TaskType.GET_LEADERBOARD) {
             this.delegate.downloadComplete(output);
