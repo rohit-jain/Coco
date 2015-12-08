@@ -282,6 +282,10 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         // click to get a different image
         else if(v.getId() == R.id.next_image_button){
 
+            if(tts!=null){
+                tts.stop();
+            }
+
             // download new image json
             initDownloadImageJson();
         }
