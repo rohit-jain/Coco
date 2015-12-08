@@ -6,7 +6,7 @@
     android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:background="@android:color/white"
     tools:context="com.example.rohitjain.coco.ImageActivity">
 
 
@@ -14,8 +14,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/imageView2"
-            android:layout_centerHorizontal="true"
             android:background="@android:color/darker_gray"
+            android:layout_below="@+id/textView"
+            android:layout_centerHorizontal="true"
             />
 
 
@@ -41,7 +42,7 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="36dp"
-            android:layout_marginBottom="81dp" />
+            android:layout_marginBottom="41dp" />
 
     <com.github.rahatarmanahmed.cpv.CircularProgressView
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -51,7 +52,25 @@
         app:cpv_indeterminate="true"
         app:cpv_color="#2196F3"
         android:layout_gravity="center_horizontal|top"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="64dp" />
+        android:layout_marginTop="33dp"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Do you think this is the image you saw?"
+        android:textSize="25sp"
+        android:textColor="@color/colorPrimary"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="0dp"
+        android:paddingBottom="15dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>
