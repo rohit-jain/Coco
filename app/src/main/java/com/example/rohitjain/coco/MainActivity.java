@@ -191,6 +191,22 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();  // Always call the superclass method first
+        if(tts!=null){
+            tts.stop();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();  // Always call the superclass method first
+        if(tts!=null){
+            tts.stop();
+        }
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();  // Always call the superclass method first
         if(tts != null) {
