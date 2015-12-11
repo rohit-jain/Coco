@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     public static final String SPEECH_RATE = "speech_rate";
     public static final String LOAD_NEW_IMAGE = "load_new_image";
     public static final Boolean DEFAULT_NEW_IMAGE = false;
+    final Float DEFAULT_SPEECH_RATE = new Float(2.0);
 
     @Override
     public void onInit(int status) {
@@ -71,7 +72,6 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     }
 
     public Float getSpeechRate(){
-        final Float DEFAULT_SPEECH_RATE = new Float(3.0);
         SharedPreferences settings = getSharedPreferences(SHARED_PREFERENCE_FILE, MODE_PRIVATE);
         Log.v(TTS_TAG, "speech rate "+settings.getFloat(SPEECH_RATE, DEFAULT_SPEECH_RATE));
 
