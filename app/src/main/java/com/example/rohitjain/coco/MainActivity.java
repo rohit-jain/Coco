@@ -59,9 +59,11 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     public static final String SHOWN_OVERLAY = "Shown Overlay"; // key for shared pref file
     public static final String USERNAME = "username"; // key for shared pref file
     public static final String SPEECH_RATE = "speech_rate";
+    public static final String TOUCH_ENABLED = "touch_enabled";
     public static final String LOAD_NEW_IMAGE = "load_new_image";
     public static final Boolean DEFAULT_NEW_IMAGE = false;
     final Float DEFAULT_SPEECH_RATE = new Float(2.0);
+    final Boolean DEFAULT_TOUCH_STATUS = false;
 
     @Override
     public void onInit(int status) {
@@ -76,6 +78,11 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         Log.v(TTS_TAG, "speech rate "+settings.getFloat(SPEECH_RATE, DEFAULT_SPEECH_RATE));
 
         return settings.getFloat(SPEECH_RATE, DEFAULT_SPEECH_RATE);
+    }
+
+    public boolean isTouchEnabled(){
+        SharedPreferences settings = getSharedPreferences(SHARED_PREFERENCE_FILE, MODE_PRIVATE);
+        return settings.getBoolean(TOUCH_ENABLED, DEFAULT_TOUCH_STATUS);
     }
 
     @Override
@@ -181,9 +188,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                     Bundle args = new Bundle();
                     args.putString(USERNAME, getUsername());
                     usernameDialogFragment.setArguments(args);
-
                     usernameDialogFragment.show(getSupportFragmentManager(), "username");
-
                 }
                 showingTutorial = Boolean.FALSE;
             }
@@ -340,7 +345,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         tts.speak( textObjectsLeft, TextToSpeech.QUEUE_FLUSH, null);
 
         // update text view to show objects left
-        tv.setText(textObjectsLeft);
+//        tv.setText(textObjectsLeft);
 
         return true;
     }
@@ -352,6 +357,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     public void downloadComplete(String jsonString, DownloadImageJson.TaskType task) {
 
         if( task == DownloadImageJson.TaskType.DOWNLOAD_IMAGE ) {
+            doubleTapUsed = 0;
 
             Log.v(DOWNLOAD_TAG, "processing JSON string:" + jsonString);
 
@@ -387,69 +393,70 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                 public boolean onTouch(View v, MotionEvent event) {
                     int action = event.getActionMasked();
 
-                    if ((action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_MOVE) && action!=MotionEvent.ACTION_CANCEL){
+                    if(isTouchEnabled()){
+                        if ((action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_MOVE) && action != MotionEvent.ACTION_CANCEL) {
 
 
-                        List<Boundary> objectsTouched = new ArrayList<Boundary>();
-                        Boundary objectTouched = null;
+                            List<Boundary> objectsTouched = new ArrayList<Boundary>();
+                            Boundary objectTouched = null;
 
-                        for (Boundary b : boundaryList) {
-                            if (b.isInside(((double) event.getX()), (double) event.getY())) {
-                                objectsTouched.add(b);
-                            }
-                        }
-
-                        if(objectsTouched.size()>=1){
-
-                            int index = new Random().nextInt(objectsTouched.size());
-                            objectTouched = objectsTouched.get(index);
-                            String categoryLabel = objectTouched.getLabel();
-                            String categoryId = Integer.toString(boundaryList.indexOf(objectTouched));
-
-                            String lastCategoryLabel = null;
-                            String lastCategoryId = null;
-
-//                        if(ttsList.size()>0) {
-//                            lastObjectTouched = ttsList.get(ttsList.size() - 1);
-                            if(lastObjectTouched!= null) {
-                                lastCategoryLabel = lastObjectTouched.getLabel();
-                                lastCategoryId = Integer.toString(boundaryList.indexOf(lastObjectTouched));
-                            }
-
-                            try {
-
-                                objectTouched.setTouched();
-
-                                // display category of object that was touched
-                                tv.setText("Category : " + categoryLabel);
-
-                                if (!ttsList.contains(objectTouched)) {
-                                    // add to tts queue with the category id as utterance id for this request
-                                    ttsMap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, categoryId);
-                                    String categoryTTS = categoryLabel;
-                                    if( categoryLabel.equals(lastCategoryLabel) && !categoryId.equals(lastCategoryId) ) {
-                                        if ( lastCategoryTTS.indexOf("next") == -1 )
-                                            categoryTTS  = "next " + categoryTTS;
-                                    }
-                                    else if( categoryLabel.equals(lastCategoryLabel) && categoryId.equals(lastCategoryId) ){
-                                        categoryTTS  = lastCategoryTTS;
-                                    }
-                                    Log.v(TTS_TAG, lastCategoryLabel + "," + categoryLabel +"," + lastCategoryId +"," + categoryId +","+categoryTTS);
-
-                                    tts.speak(categoryTTS, TextToSpeech.QUEUE_ADD, ttsMap);
-                                    // add it to the list of objects in speech queue
-                                    lastCategoryTTS = categoryTTS;
-                                    lastObjectTouched = objectTouched;
-
-                                    ttsList.add(objectTouched);
+                            for (Boundary b : boundaryList) {
+                                if (b.isInside(((double) event.getX()), (double) event.getY())) {
+                                    objectsTouched.add(b);
                                 }
-                            } catch (Exception e) {
-                                Log.e(TTS_TAG, "error while adding objects to tts");
-                                e.printStackTrace();
+                            }
+
+                            if (objectsTouched.size() >= 1) {
+
+                                int index = new Random().nextInt(objectsTouched.size());
+                                objectTouched = objectsTouched.get(index);
+                                String categoryLabel = objectTouched.getLabel();
+                                String categoryId = Integer.toString(boundaryList.indexOf(objectTouched));
+
+                                String lastCategoryLabel = null;
+                                String lastCategoryId = null;
+
+    //                        if(ttsList.size()>0) {
+    //                            lastObjectTouched = ttsList.get(ttsList.size() - 1);
+                                if (lastObjectTouched != null) {
+                                    lastCategoryLabel = lastObjectTouched.getLabel();
+                                    lastCategoryId = Integer.toString(boundaryList.indexOf(lastObjectTouched));
+                                }
+
+                                try {
+
+                                    objectTouched.setTouched();
+
+                                    // display category of object that was touched
+//                                    tv.setText("Category : " + categoryLabel);
+
+                                    if (!ttsList.contains(objectTouched)) {
+                                        // add to tts queue with the category id as utterance id for this request
+                                        ttsMap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, categoryId);
+                                        String categoryTTS = categoryLabel;
+                                        if (categoryLabel.equals(lastCategoryLabel) && !categoryId.equals(lastCategoryId)) {
+                                            if (lastCategoryTTS.indexOf("next") == -1)
+                                                categoryTTS = "next " + categoryTTS;
+                                        } else if (categoryLabel.equals(lastCategoryLabel) && categoryId.equals(lastCategoryId)) {
+                                            categoryTTS = lastCategoryTTS;
+                                        }
+                                        Log.v(TTS_TAG, lastCategoryLabel + "," + categoryLabel + "," + lastCategoryId + "," + categoryId + "," + categoryTTS);
+
+                                        tts.speak(categoryTTS, TextToSpeech.QUEUE_ADD, ttsMap);
+                                        // add it to the list of objects in speech queue
+                                        lastCategoryTTS = categoryTTS;
+                                        lastObjectTouched = objectTouched;
+
+                                        ttsList.add(objectTouched);
+                                    }
+                                } catch (Exception e) {
+                                    Log.e(TTS_TAG, "error while adding objects to tts");
+                                    e.printStackTrace();
+                                }
+
                             }
 
                         }
-
                     }
 
                     return true;
@@ -541,7 +548,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
             // Angle boundary for OCR boundaries
             for (int i = 0; i < ocr.length(); i++){
-                boundaryList.add(new AngleBoundary(ocr.getJSONObject(i)));
+//                boundaryList.add(new AngleBoundary(ocr.getJSONObject(i)));
             }
 
         } catch (JSONException e) {

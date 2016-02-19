@@ -7,6 +7,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -22,9 +23,11 @@ import org.json.JSONObject;
 public class SettingsActivity extends AppCompatActivity implements UsernameDialog.NoticeDialogListener, HandleResponse{
 
     private SeekBar seekBar;
+    private CheckBox touchCheckBox;
     TextView tv;
     int currentSpeechRate;
     int changedSpeechRate;
+    final Boolean DEFAULT_TOUCH_STATUS = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,6 +54,9 @@ public class SettingsActivity extends AppCompatActivity implements UsernameDialo
         // get textview for username
         tv = (TextView) findViewById(R.id.username);
         tv.setText(getUsername());
+
+        touchCheckBox = (CheckBox) findViewById(R.id.touch_checkbox);
+        touchCheckBox.setChecked(isTouchEnabled());
 
         seekBar = (SeekBar) findViewById(R.id.speechRateSeekBar);
         currentSpeechRate = Math.round(getSpeechRate());
@@ -127,6 +133,24 @@ public class SettingsActivity extends AppCompatActivity implements UsernameDialo
     protected void onPause() {
         changeSpeechRate();
         super.onPause();
+    }
+
+    public void onCheckboxClicked(View view) {
+        // Is the view now checked?
+        boolean checked = ((CheckBox) view).isChecked();
+
+        // Check which checkbox was clicked
+        switch(view.getId()) {
+            case R.id.touch_checkbox:
+                SharedPreferences settings = getSharedPreferences(MainActivity.SHARED_PREFERENCE_FILE, MODE_PRIVATE);
+                settings.edit().putBoolean(MainActivity.TOUCH_ENABLED,checked).commit();
+                break;
+        }
+    }
+
+    public boolean isTouchEnabled(){
+        SharedPreferences settings = getSharedPreferences(MainActivity.SHARED_PREFERENCE_FILE, MODE_PRIVATE);
+        return settings.getBoolean(MainActivity.TOUCH_ENABLED, DEFAULT_TOUCH_STATUS);
     }
 
     Float getSpeechRate(){

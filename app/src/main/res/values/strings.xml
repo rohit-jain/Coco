@@ -6,6 +6,8 @@
 
     <string name="cancel">cancel</string>
     <string name="save">save</string>
+    <string name="settings_touch">touch active</string>
+    <string name="next">Next</string>
 
     <string name="get_score_url">http://%1$s/experiment/getscore/</string>
 </resources>
