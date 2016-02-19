@@ -17,7 +17,8 @@
                 android:layout_gravity="center_horizontal|top"
                 android:foregroundGravity="center_horizontal"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"/>
+                android:layout_marginTop="10dp"
+                android:contentDescription="image area"/>
 
         <TextView
             android:layout_width="match_parent"
