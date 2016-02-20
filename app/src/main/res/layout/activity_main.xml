@@ -18,7 +18,9 @@
                 android:foregroundGravity="center_horizontal"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
-                android:contentDescription="image area"/>
+                android:contentDescription="image area"
+                android:focusable="true"
+                android:focusableInTouchMode="true"/>
 
         <TextView
             android:layout_width="match_parent"

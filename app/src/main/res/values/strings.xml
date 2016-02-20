@@ -10,4 +10,6 @@
     <string name="next">Next</string>
 
     <string name="get_score_url">http://%1$s/experiment/getscore/</string>
+    <string name="accessibility_service_description">Palpiction</string>
+
 </resources>

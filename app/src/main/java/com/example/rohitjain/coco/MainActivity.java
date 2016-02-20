@@ -35,10 +35,11 @@ import java.util.Locale;
 import java.util.Random;
 
 
-public class MainActivity extends AppCompatActivity implements GestureDetector.OnGestureListener,
-        GestureDetector.OnDoubleTapListener, OnInitListener, View.OnClickListener, HandleResponse, UsernameDialog.NoticeDialogListener{
 
-    private static final String GESTURE_DEBUG_TAG = "Main Activity Gestures", DOWNLOAD_TAG = "Download", TTS_TAG = "TTS", ACTIVITY_TAG = "MAIN ACTIVITY";
+public class MainActivity extends AppCompatActivity implements GestureDetector.OnGestureListener,
+        GestureDetector.OnDoubleTapListener, OnInitListener, View.OnClickListener, HandleResponse, UsernameDialog.NoticeDialogListener, View.OnTouchListener {
+
+    public static final String GESTURE_DEBUG_TAG = "Main Activity Gestures", DOWNLOAD_TAG = "Download", TTS_TAG = "TTS", ACTIVITY_TAG = "MAIN ACTIVITY";
     private GestureDetectorCompat mDetector;
     String imageId = "";
     TextToSpeech tts;
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     public static final String TOUCH_ENABLED = "touch_enabled";
     public static final String LOAD_NEW_IMAGE = "load_new_image";
     public static final Boolean DEFAULT_NEW_IMAGE = false;
-    final Float DEFAULT_SPEECH_RATE = new Float(2.0);
+    public static final Float DEFAULT_SPEECH_RATE = new Float(2.0);
     final Boolean DEFAULT_TOUCH_STATUS = false;
 
     @Override
@@ -115,11 +116,15 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         // Instantiate buttons and set click listeners
         Button nextImageButton = (Button) findViewById(R.id.next_image_button );
         Button showCaptionButton = (Button) findViewById(R.id.captions_button );
+
+
         // text view to display objects tapped & left
         tv = (TextView) findViewById(R.id.textObject);
 
         nextImageButton.setOnClickListener(this);
         showCaptionButton.setOnClickListener(this);
+        nextImageButton.setOnTouchListener(this);
+        showCaptionButton.setOnTouchListener(this);
 
         // check if the user got a username from server
         if( getUsername().equals(DEFAULT_USERNAME)){
@@ -680,5 +685,18 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     }
 
 
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
 
+        if(v.getId() == R.id.next_image_button){
+            tts.speak("try different image",TextToSpeech.QUEUE_FLUSH, null);
+            return true;
+        }
+        else if(v.getId() == R.id.captions_button){
+            tts.speak("next",TextToSpeech.QUEUE_FLUSH, null);
+            return true;
+        }
+
+        return false;
+    }
 }
