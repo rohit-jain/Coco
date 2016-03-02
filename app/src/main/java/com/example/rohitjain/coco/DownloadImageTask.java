@@ -32,7 +32,7 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         this.progressView = progressView;
         this.showImage = showImage;
         this.screenWidth = size.x;
-        this.screenHeight = (int)(350*(dpi/160f));
+        this.screenHeight = (int)(size.y*0.55);
         this.delegate = delegate;
     }
 
@@ -72,23 +72,25 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 
     protected void onPostExecute(Bitmap resultImage) {
         this.progressView.setVisibility(View.INVISIBLE);
+//            Log.d("Download", scale_x+" "+scale_y);
+//            Log.d("Download", this.screenHeight+" "+this.screenWidth);
 
         if (this.showImage == true) {
 //            set image width and height
 //            this.bmImage.getLayoutParams().height = this.imageHeight;
 //            this.bmImage.getLayoutParams().width = this.imageWidth;
-            float scale_x = this.screenWidth/(float)this.imageWidth;
-            float scale_y = this.screenHeight/(float)this.imageHeight;
-            Log.d("Download", scale_x+" "+scale_y);
-            Log.d("Download", this.screenHeight+" "+this.screenWidth);
             this.bmImage.requestLayout();
             this.bmImage.setImageBitmap(resultImage);
-            this.delegate.imageDownloadComplete(scale_x, scale_y);
+//            this.delegate.imageDownloadComplete(scale_x, scale_y);
         }
         else {
 //            this.bmImage.getLayoutParams().height = this.imageHeight;
 //            this.bmImage.getLayoutParams().width = this.imageWidth;
+            float scale_x = this.screenWidth/(float)this.imageWidth;
+            float scale_y = this.screenHeight/(float)this.imageHeight;
+
             this.bmImage.requestLayout();
+            this.delegate.imageDownloadComplete(scale_x, scale_y);
             if(this.overlayImage != null) {
 //                this.overlayImage.getLayoutParams().height = this.imageHeight;
 //                this.overlayImage.getLayoutParams().width = this.imageWidth;

@@ -8,6 +8,8 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.view.GestureDetectorCompat;
+import android.support.v4.view.ViewPager;
+import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -20,9 +22,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
@@ -52,7 +56,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     List<Boundary> boundaryList;
     Boundary lastObjectTouched = null;
     int captionsUsed = 0, doubleTapUsed = 0;
-
+    int dpi;
+    Point size;
     Boolean firstTime = Boolean.FALSE;
     Boolean showingTutorial = Boolean.FALSE;
 
@@ -67,6 +72,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     public static final Boolean DEFAULT_NEW_IMAGE = false;
     final Float DEFAULT_SPEECH_RATE = new Float(2.0);
     final Boolean DEFAULT_TOUCH_STATUS = true;
+    Display display;
+    DisplayMetrics metrics;
 
     @Override
     public void onInit(int status) {
@@ -101,6 +108,17 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         }
 
         boundaryList = new ArrayList<Boundary>();
+        display = getWindowManager().getDefaultDisplay();
+        metrics = getResources().getDisplayMetrics();
+        dpi = metrics.densityDpi;
+        size = new Point();
+        display.getSize(size);
+
+        LinearLayout imageViewLayout = (LinearLayout)findViewById(R.id.imageViewLayout);
+        // Gets the layout params that will allow you to resize the layout
+        ViewGroup.LayoutParams params = imageViewLayout.getLayoutParams();
+        // Changes the height and width to the specified *pixels*
+        params.height = (int)(size.y * 0.55);
         // Download json for the image to be shown
         initDownloadImageJson();
 
@@ -571,11 +589,6 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
         String IMAGE_URL_STRING = "http://"+ getString(R.string.CURRENT_IP) +"/static/" + imageFileName;
 
-        Display display = getWindowManager().getDefaultDisplay();
-        DisplayMetrics metrics = getResources().getDisplayMetrics();
-        int dpi = metrics.densityDpi;
-        Point size = new Point();
-        display.getSize(size);
 
         // Fire asynctask to download image and set the grey box according to image dimension
         // For first time, set grey box on the overlay as well
@@ -584,7 +597,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             new DownloadImageTask(this, (ImageView) findViewById(R.id.imageView), (ImageView) findViewById(R.id.imageBlankView), progressView, false, size, dpi).execute(IMAGE_URL_STRING);
         }
         else{
-            new DownloadImageTask(this, (ImageView) findViewById(R.id.imageView), null, progressView, true, size, dpi).execute(IMAGE_URL_STRING);
+            new DownloadImageTask(this, (ImageView) findViewById(R.id.imageView), null, progressView, false, size, dpi).execute(IMAGE_URL_STRING);
         }
     }
 

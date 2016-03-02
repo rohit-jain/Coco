@@ -8,8 +8,9 @@
         tools:context=".MainActivity">
 
         <LinearLayout
+            android:id="@+id/imageViewLayout"
             android:layout_width="match_parent"
-            android:layout_height="350dp"
+            android:layout_height="match_parent"
             android:layout_alignParentEnd="false"
             android:layout_alignParentRight="false">
             <ImageView
