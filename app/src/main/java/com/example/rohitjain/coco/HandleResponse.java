@@ -5,6 +5,7 @@ package com.example.rohitjain.coco;
  */
 public interface HandleResponse {
     void downloadComplete(String output, DownloadImageJson.TaskType task);
+    void imageDownloadComplete(float scale_x, float scale_y);
     void removeFromTtsList(Boundary b);
     void setUsername(String output);
 }

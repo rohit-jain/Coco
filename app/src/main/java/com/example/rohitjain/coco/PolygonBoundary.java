@@ -75,4 +75,13 @@ public class PolygonBoundary extends Boundary{
         }
     }
 
+    @Override
+    void scale(float scale_x, float scale_y){
+        Log.v("Scaling", "scaling polygon");
+        for(Point p: this.vertices){
+            p.x = (p.x * scale_x);
+            p.y = (p.y * scale_y);
+        }
+    }
+
 }

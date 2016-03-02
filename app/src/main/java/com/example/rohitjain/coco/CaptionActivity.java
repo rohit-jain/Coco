@@ -61,6 +61,11 @@ public class CaptionActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     @Override
+    public void imageDownloadComplete(float scale_x, float scale_y) {
+
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_caption);

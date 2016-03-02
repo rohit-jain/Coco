@@ -3,6 +3,7 @@ package com.example.rohitjain.coco;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Point;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.support.v4.app.DialogFragment;
@@ -10,7 +11,9 @@ import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -63,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     public static final String LOAD_NEW_IMAGE = "load_new_image";
     public static final Boolean DEFAULT_NEW_IMAGE = false;
     final Float DEFAULT_SPEECH_RATE = new Float(2.0);
-    final Boolean DEFAULT_TOUCH_STATUS = false;
+    final Boolean DEFAULT_TOUCH_STATUS = true;
 
     @Override
     public void onInit(int status) {
@@ -472,6 +475,14 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
     }
 
+    @Override
+    public void imageDownloadComplete(float scale_x, float scale_y) {
+        //scale boundaries
+        for (Boundary b : boundaryList) {
+            b.scale(scale_x, scale_y);
+        }
+    }
+
     /*
     Handle clicks for menu items selected
      */
@@ -560,14 +571,20 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
         String IMAGE_URL_STRING = "http://"+ getString(R.string.CURRENT_IP) +"/static/" + imageFileName;
 
+        Display display = getWindowManager().getDefaultDisplay();
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        int dpi = metrics.densityDpi;
+        Point size = new Point();
+        display.getSize(size);
+
         // Fire asynctask to download image and set the grey box according to image dimension
         // For first time, set grey box on the overlay as well
         if((firstTime == true) || (showingTutorial == true)) {
             Log.v(DOWNLOAD_TAG, "downlaoding both images");
-            new DownloadImageTask((ImageView) findViewById(R.id.imageView), (ImageView) findViewById(R.id.imageBlankView), progressView, false).execute(IMAGE_URL_STRING);
+            new DownloadImageTask(this, (ImageView) findViewById(R.id.imageView), (ImageView) findViewById(R.id.imageBlankView), progressView, false, size, dpi).execute(IMAGE_URL_STRING);
         }
         else{
-            new DownloadImageTask((ImageView) findViewById(R.id.imageView), null, progressView, false).execute(IMAGE_URL_STRING);
+            new DownloadImageTask(this, (ImageView) findViewById(R.id.imageView), null, progressView, true, size, dpi).execute(IMAGE_URL_STRING);
         }
     }
 

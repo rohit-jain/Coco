@@ -85,6 +85,11 @@ public class LeaderboardActivity extends AppCompatActivity implements HandleResp
     }
 
     @Override
+    public void imageDownloadComplete(float scale_x, float scale_y) {
+
+    }
+
+    @Override
     public void removeFromTtsList(Boundary b) {
 
     }

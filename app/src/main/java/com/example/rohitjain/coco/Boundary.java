@@ -44,6 +44,10 @@ public class Boundary {
         this.touched = true;
     }
 
+    void scale(float scale_x, float scale_y){
+        Log.v("Scaling", "default scaling called - not implemented");
+    }
+
     Boundary(){
 
         this.label = "";

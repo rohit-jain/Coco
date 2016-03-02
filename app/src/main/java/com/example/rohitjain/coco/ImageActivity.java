@@ -116,6 +116,11 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
+    @Override
+    public void imageDownloadComplete(float scale_x, float scale_y) {
+
+    }
+
 
     @Override
     public void removeFromTtsList(Boundary b) {

@@ -67,13 +67,25 @@ public class AngleBoundary extends Boundary {
 
     void setVertices(){
         Double deltaX = (this.width * Math.cos(this.theta));
-        Double deltaY = (this.width * Math.cos(this.theta));
+        Double deltaY = (this.height * Math.cos(this.theta));
         this.vertices.add(new Point( this.x, this.y ));
         this.vertices.add(new Point( (this.x + deltaX ) , (this.y + deltaY ) ) );
         this.vertices.add(new Point( (this.x + deltaX ),  (this.y + this.height - deltaY)));
         this.vertices.add(new Point( this.x, this.y + this.height));
     }
 
+    @Override
+    void scale(float scale_x, float scale_y){
+        Log.v("Scaling", "scaling ocr - not proper - check theta meaning");
+        for(Point p: this.vertices){
+            p.x = (p.x * scale_x);
+            p.y = (p.y * scale_y);
+        }
+        this.x = this.x*scale_x;
+        this.y = this.y*scale_y;
+        this.width = (this.width*scale_x);
+        this.height = (this.height*scale_y);
 
+    }
 
 }

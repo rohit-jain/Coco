@@ -27,7 +27,7 @@ public class SettingsActivity extends AppCompatActivity implements UsernameDialo
     TextView tv;
     int currentSpeechRate;
     int changedSpeechRate;
-    final Boolean DEFAULT_TOUCH_STATUS = false;
+    final Boolean DEFAULT_TOUCH_STATUS = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -91,6 +91,11 @@ public class SettingsActivity extends AppCompatActivity implements UsernameDialo
         if(task == DownloadImageJson.TaskType.GET_USER_SCORE) {
             // do nothing for now
         }
+    }
+
+    @Override
+    public void imageDownloadComplete(float scale_x, float scale_y) {
+
     }
 
     @Override
