@@ -1,4 +1,4 @@
-package com.example.rohitjain.coco;
+package com.palpiction.rohitjain.coco;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -27,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.palpiction.rohitjain.coco.R;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 
 import org.json.JSONArray;

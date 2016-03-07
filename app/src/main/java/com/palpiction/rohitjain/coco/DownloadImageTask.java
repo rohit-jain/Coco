@@ -1,4 +1,4 @@
-package com.example.rohitjain.coco;
+package com.palpiction.rohitjain.coco;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

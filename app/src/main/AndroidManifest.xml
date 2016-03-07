@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.rohitjain.coco" >
+    package="com.palpiction.rohitjain.coco" >
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -11,23 +11,23 @@
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
-        <activity android:name=".MainActivity" >
+        <activity android:name="com.palpiction.rohitjain.coco.MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CaptionActivity">
+        <activity android:name="com.palpiction.rohitjain.coco.CaptionActivity">
         </activity>
-        <activity android:name=".ImageActivity">
+        <activity android:name="com.palpiction.rohitjain.coco.ImageActivity">
         </activity>
-        <activity android:name=".SettingsActivity">
+        <activity android:name="com.palpiction.rohitjain.coco.SettingsActivity">
         </activity>
-        <activity android:name=".LeaderboardActivity">
+        <activity android:name="com.palpiction.rohitjain.coco.LeaderboardActivity">
 
         </activity>
-        <activity android:name=".AccessibleCaptionActivity">
+        <activity android:name="com.palpiction.rohitjain.coco.AccessibleCaptionActivity">
 
         </activity>
 

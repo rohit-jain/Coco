@@ -1,10 +1,12 @@
-package com.example.rohitjain.coco;
+package com.palpiction.rohitjain.coco;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.GridView;
 import android.widget.TextView;
+
+import com.palpiction.rohitjain.coco.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;

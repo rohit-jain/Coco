@@ -1,4 +1,4 @@
-package com.example.rohitjain.coco;
+package com.palpiction.rohitjain.coco;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
+
+import com.palpiction.rohitjain.coco.R;
 
 /**
  * Created by rohitjain on 06/12/15.

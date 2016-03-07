@@ -1,4 +1,4 @@
-package com.example.rohitjain.coco;
+package com.palpiction.rohitjain.coco;
 
 import android.app.Dialog;
 import android.content.SharedPreferences;
@@ -10,6 +10,8 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import com.palpiction.rohitjain.coco.R;
 
 
 /**

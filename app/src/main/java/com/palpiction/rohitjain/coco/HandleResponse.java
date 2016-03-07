@@ -1,4 +1,4 @@
-package com.example.rohitjain.coco;
+package com.palpiction.rohitjain.coco;
 
 /**
  * Created by rohitjain on 12/10/15.

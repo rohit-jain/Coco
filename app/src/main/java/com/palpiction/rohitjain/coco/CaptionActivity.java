@@ -1,4 +1,4 @@
-package com.example.rohitjain.coco;
+package com.palpiction.rohitjain.coco;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+
+import com.palpiction.rohitjain.coco.R;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import org.json.JSONArray;
 import org.json.JSONException;

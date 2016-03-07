@@ -1,4 +1,4 @@
-package com.example.rohitjain.coco;
+package com.palpiction.rohitjain.coco;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.palpiction.rohitjain.coco.R;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 
 import org.apache.http.NameValuePair;
@@ -21,7 +22,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class AccessibleCaptionActivity extends AppCompatActivity implements View.OnClickListener, HandleResponse{
+public class AccessibleCaptionActivity extends AppCompatActivity implements View.OnClickListener, HandleResponse {
 
     String imageId;
     int captionsUsed, doubleTapUsed;
