@@ -8,8 +8,6 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.view.GestureDetectorCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -154,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             Log.v("Main Activity", "First time, preparing overlay");
             firstTime = Boolean.TRUE;
 
-            showTutorial();
+            //showTutorial();
             // record the fact that the app has been started at least once and overlay shown
             settings.edit().putBoolean(SHOWN_OVERLAY, false).commit();
         }
@@ -295,7 +293,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                 overlayShowCaptionsButton.performClick();
             }
             else {
-                Intent intent = new Intent(MainActivity.this, CaptionActivity.class);
+                Intent intent = new Intent(MainActivity.this, AccessibleCaptionActivity.class);
                 Bundle b = new Bundle();
                 b.putString("imageId", imageId); //Your id
                 b.putInt("captionsUsed", objectsTouched());
@@ -508,9 +506,9 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.tutorial:
-                showTutorial();
-                return true;
+//            case R.id.tutorial:
+//                showTutorial();
+//                return true;
             case R.id.settings:
                 Intent intentSettings = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(intentSettings);

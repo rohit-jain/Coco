@@ -1,6 +1,5 @@
 package com.example.rohitjain.coco;
 
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;

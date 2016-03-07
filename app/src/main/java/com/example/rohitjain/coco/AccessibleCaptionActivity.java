@@ -1,12 +1,17 @@
 package com.example.rohitjain.coco;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,12 +21,15 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class CaptionActivity extends AppCompatActivity implements View.OnClickListener, HandleResponse{
+public class AccessibleCaptionActivity extends AppCompatActivity implements View.OnClickListener, HandleResponse{
 
     String imageId;
     int captionsUsed, doubleTapUsed;
     CircularProgressView progressView;
     HashMap<Integer, List<String>> captionMapping = new HashMap<Integer, List<String>>();
+    final String SHARED_PREFERENCE_FILE = "COCO_PREFERENCES";
+    final String USERNAME = "username"; // key for shared pref file
+
 
     @Override
     public void downloadComplete(String output, DownloadImageJson.TaskType task) {
@@ -86,16 +94,26 @@ public class CaptionActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onClick(View v) {
-        Intent intent = new Intent(CaptionActivity.this, ImageActivity.class);
-        Bundle b = new Bundle();
-        b.putString("captionImageId", captionMapping.get(v.getId()).get(0));
-        b.putString("captionType", captionMapping.get(v.getId()).get(1));
-        b.putString("imageId", imageId); //Your id
-        b.putInt("captionsUsed", captionsUsed);
-        b.putInt("doubleTapUsed", doubleTapUsed);
+        String captionType = captionMapping.get(v.getId()).get(1);
+        String captionImageId = captionMapping.get(v.getId()).get(0);
 
-        intent.putExtras(b);
-        startActivity(intent);
+        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+        SharedPreferences settings = getSharedPreferences(SHARED_PREFERENCE_FILE, MODE_PRIVATE);
+        final String DEFAULT_USERNAME = "daffi";
+        final String URL = "http://"+ getString(R.string.CURRENT_IP) +"/experiment/recordoutcome_acc";
+        nameValuePairs.add(new BasicNameValuePair("username", settings.getString(USERNAME, DEFAULT_USERNAME)));
+        nameValuePairs.add(new BasicNameValuePair("image_id", imageId));
+        nameValuePairs.add(new BasicNameValuePair("double_used", Integer.toString(doubleTapUsed)));
+        nameValuePairs.add(new BasicNameValuePair("captions_used", Integer.toString(captionsUsed)));
+        nameValuePairs.add(new BasicNameValuePair("caption_type", captionType));
+        nameValuePairs.add(new BasicNameValuePair("caption_image_id", captionImageId));
+
+        new sendPost(nameValuePairs).execute(URL);
+        finish();
+        Intent i = new Intent(getApplicationContext(), MainActivity.class);
+        settings.edit().putBoolean(MainActivity.LOAD_NEW_IMAGE,true).commit();
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(i);
 
     }
 

@@ -1,7 +1,6 @@
 package com.example.rohitjain.coco;
 
 import android.os.AsyncTask;
-import android.os.SystemClock;
 import android.util.Log;
 
 import org.apache.http.HttpEntity;
@@ -12,8 +11,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicHttpResponse;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;

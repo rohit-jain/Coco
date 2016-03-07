@@ -27,6 +27,9 @@
         <activity android:name=".LeaderboardActivity">
 
         </activity>
+        <activity android:name=".AccessibleCaptionActivity">
+
+        </activity>
 
     </application>
 
