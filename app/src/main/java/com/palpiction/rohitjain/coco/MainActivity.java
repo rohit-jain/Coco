@@ -510,6 +510,10 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 //            case R.id.tutorial:
 //                showTutorial();
 //                return true;
+            case R.id.help:
+                Intent intentHelp = new Intent(MainActivity.this, HelpActivity.class);
+                startActivity(intentHelp);
+                return true;
             case R.id.settings:
                 Intent intentSettings = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(intentSettings);

@@ -25,10 +25,10 @@
         <activity android:name="com.palpiction.rohitjain.coco.SettingsActivity">
         </activity>
         <activity android:name="com.palpiction.rohitjain.coco.LeaderboardActivity">
-
         </activity>
         <activity android:name="com.palpiction.rohitjain.coco.AccessibleCaptionActivity">
-
+        </activity>
+        <activity android:name="com.palpiction.rohitjain.coco.HelpActivity">
         </activity>
 
     </application>
