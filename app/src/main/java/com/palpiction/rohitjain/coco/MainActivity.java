@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     public static final String TOUCH_ENABLED = "touch_enabled";
     public static final String LOAD_NEW_IMAGE = "load_new_image";
     public static final Boolean DEFAULT_NEW_IMAGE = false;
-    final Float DEFAULT_SPEECH_RATE = new Float(0.0);
+    final Float DEFAULT_SPEECH_RATE = new Float(2.0);
     final Boolean DEFAULT_TOUCH_STATUS = true;
     Display display;
     DisplayMetrics metrics;
@@ -154,6 +154,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             firstTime = Boolean.TRUE;
 
             //showTutorial();
+            askUsername();
             // record the fact that the app has been started at least once and overlay shown
             settings.edit().putBoolean(SHOWN_OVERLAY, false).commit();
         }
@@ -201,18 +202,22 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             @Override
             public void onClick(View v) {
                 overlayShowCaptions.setVisibility(View.GONE);
-                if(firstTime){
-                    firstTime = Boolean.FALSE;
-                    DialogFragment usernameDialogFragment = new UsernameDialog();
-                    // Supply username as an argument.
-                    Bundle args = new Bundle();
-                    args.putString(USERNAME, getUsername());
-                    usernameDialogFragment.setArguments(args);
-                    usernameDialogFragment.show(getSupportFragmentManager(), "username");
-                }
+                askUsername();
                 showingTutorial = Boolean.FALSE;
             }
         });
+    }
+
+    private void askUsername(){
+        if(firstTime){
+            firstTime = Boolean.FALSE;
+            DialogFragment usernameDialogFragment = new UsernameDialog();
+            // Supply username as an argument.
+            Bundle args = new Bundle();
+            args.putString(USERNAME, getUsername());
+            usernameDialogFragment.setArguments(args);
+            usernameDialogFragment.show(getSupportFragmentManager(), "username");
+        }
     }
 
     @Override

@@ -157,7 +157,7 @@ public class SettingsActivity extends AppCompatActivity implements UsernameDialo
     }
 
     Float getSpeechRate(){
-        final Float DEFAULT_SPEECH_RATE = new Float(3.0);
+        final Float DEFAULT_SPEECH_RATE = new Float(2.0);
         SharedPreferences settings = getSharedPreferences(MainActivity.SHARED_PREFERENCE_FILE, MODE_PRIVATE);
         return settings.getFloat(MainActivity.SPEECH_RATE, DEFAULT_SPEECH_RATE);
     }
