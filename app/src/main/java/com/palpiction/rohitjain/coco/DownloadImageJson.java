@@ -1,6 +1,8 @@
 package com.palpiction.rohitjain.coco;
 
 import android.os.AsyncTask;
+import android.util.Log;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -72,6 +74,7 @@ public class DownloadImageJson extends AsyncTask<String, Void, String> {
             this.delegate.downloadComplete(output, this.requestType);
         }
         else if(this.requestType==TaskType.GET_USERNAME){
+            Log.d("DOwnlaod","GOt username");
             this.delegate.setUsername("user"+output);
         }
         else if(this.requestType==TaskType.GET_LEADERBOARD) {

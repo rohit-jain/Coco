@@ -102,6 +102,12 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
         Log.v(ACTIVITY_TAG, "Creating main activity");
 
+        // check if the user got a username from server
+        if( getUsername().equals(DEFAULT_USERNAME)){
+            String getUsernameUrl = "http://"+ getString(R.string.CURRENT_IP) +"/experiment/getnextuser";
+            new DownloadImageJson(this, DownloadImageJson.TaskType.GET_USERNAME).execute(getUsernameUrl);
+        }
+
         if(tts == null){
             tts = new TextToSpeech(this, this);
         }
@@ -114,10 +120,18 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         display.getSize(size);
 
         LinearLayout imageViewLayout = (LinearLayout)findViewById(R.id.imageViewLayout);
+        LinearLayout imageOverlayViewLayout = (LinearLayout)findViewById(R.id.imageOverlayViewLayout);
+
         // Gets the layout params that will allow you to resize the layout
         ViewGroup.LayoutParams params = imageViewLayout.getLayoutParams();
         // Changes the height and width to the specified *pixels*
         params.height = (int)(size.y * 0.55);
+
+        // Gets the layout params that will allow you to resize the layout
+        ViewGroup.LayoutParams overlayParams = imageOverlayViewLayout.getLayoutParams();
+        // Changes the height and width to the specified *pixels*
+        overlayParams.height = (int)(size.y * 0.55);
+
         // Download json for the image to be shown
         initDownloadImageJson();
 
@@ -141,20 +155,14 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         nextImageButton.setOnClickListener(this);
         showCaptionButton.setOnClickListener(this);
 
-        // check if the user got a username from server
-        if( getUsername().equals(DEFAULT_USERNAME)){
-            String getUsernameUrl = "http://"+ getString(R.string.CURRENT_IP) +"/experiment/getnextuser";
-            new DownloadImageJson(this, DownloadImageJson.TaskType.GET_USERNAME).execute(getUsernameUrl);
-        }
-
         // show overlays if the application has been started for the first time
         if (settings.getBoolean(SHOWN_OVERLAY, true)) {
             // if the app is being launched for first time, do the overlay
             Log.v("Main Activity", "First time, preparing overlay");
             firstTime = Boolean.TRUE;
 
-            //showTutorial();
-            askUsername();
+            showTutorial();
+            //askUsername();
             // record the fact that the app has been started at least once and overlay shown
             settings.edit().putBoolean(SHOWN_OVERLAY, false).commit();
         }
@@ -295,8 +303,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         if(v.getId() == R.id.captions_button){
 
             if( showingTutorial == true ) {
-                Button overlayShowCaptionsButton = (Button) findViewById(R.id.buttonOverlay3);
-                overlayShowCaptionsButton.performClick();
+//                Button overlayShowCaptionsButton = (Button) findViewById(R.id.buttonOverlay3);
+//                overlayShowCaptionsButton.performClick();
             }
             else {
                 Intent intent = new Intent(MainActivity.this, AccessibleCaptionActivity.class);
@@ -331,8 +339,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         Log.d(GESTURE_DEBUG_TAG, "onDoubleTap: " + event.toString());
 
         if( showingTutorial == true) {
-            Button overlayDoubleTapButton = (Button) findViewById(R.id.buttonOverlay2);
-            overlayDoubleTapButton.performClick();
+//            Button overlayDoubleTapButton = (Button) findViewById(R.id.buttonOverlay2);
+//            overlayDoubleTapButton.performClick();
         }
 
         String textObjectsLeft = "";
@@ -394,20 +402,20 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             ttsMap = new HashMap<String, String>();
 
             if((firstTime == true) || (showingTutorial == true)){
-                ImageView ibv = (ImageView) findViewById(R.id.imageBlankView);
-                ibv.setOnTouchListener(new ImageView.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        int action = event.getActionMasked();
-
-                        if ((action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_MOVE) && action != MotionEvent.ACTION_CANCEL) {
-
-                            Button overlayImageButtton = (Button) findViewById(R.id.buttonOverlay1);
-                            overlayImageButtton.performClick();
-                        }
-                        return true;
-                    }
-                });
+//                ImageView ibv = (ImageView) findViewById(R.id.imageBlankView);
+//                ibv.setOnTouchListener(new ImageView.OnTouchListener() {
+//                    @Override
+//                    public boolean onTouch(View v, MotionEvent event) {
+//                        int action = event.getActionMasked();
+//
+//                        if ((action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_MOVE) && action != MotionEvent.ACTION_CANCEL) {
+//
+//                            Button overlayImageButtton = (Button) findViewById(R.id.buttonOverlay1);
+//                            overlayImageButtton.performClick();
+//                        }
+//                        return true;
+//                    }
+//                });
             }
 
             final ImageView iv = (ImageView) findViewById(R.id.imageView);

@@ -88,16 +88,26 @@
             android:translationZ="30dp"
             android:visibility="gone">
 
+            <LinearLayout
+                android:id="@+id/imageOverlayViewLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="false"
+                android:layout_alignParentRight="false">
+
             <ImageView
                 android:adjustViewBounds="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/imageBlankView"
+                android:scaleType="fitXY"
                 android:background="@android:color/darker_gray"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/imageBlankView"
                 android:layout_gravity="center_horizontal|top"
                 android:foregroundGravity="center_horizontal"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp" />
+
+            </LinearLayout>
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -112,7 +122,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
-                android:text="Touch and drag inside of the image (the grey box). As you encounter objects, the object name will be read out loud."
+                android:text="Touch and drag inside of the image area, grey box. As you encounter objects, the object name will be read out loud."
                 android:textSize="20sp"
                 android:textColor="@android:color/white"
                 android:id="@+id/textView3"
@@ -156,7 +166,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
-                android:text="Double tap at any time outside of the grey box/image to have the list of objects remaining in the image read out loud"
+                android:text="Double tap at any time outside of the grey box to have the list of objects remaining in the image read out loud"
                 android:textSize="20sp"
                 android:padding="20dp"
                 android:textAlignment="center"
@@ -210,7 +220,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
-                android:text="At any time, when you are done exploring, press “Show Captions” to be quizzed on your understanding."
+                android:text="At any time, when you are done exploring, press “Next” to be quizzed on your understanding."
                 android:textSize="20sp"
                 android:padding="15dp"
                 android:textAlignment="center"
